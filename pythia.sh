@@ -22,7 +22,7 @@ esac
 ./configure --prefix=$INSTALLROOT \
             --enable-shared \
             --with-hepmc2=${HEPMC_ROOT} \
-            --with-lhapdf6=${LHAPDF_ROOT} \
+            ${LHAPDF_ROOT:+--with-lhapdf6="$LHAPDF_ROOT"} \
             ${BOOST_ROOT:+--with-boost="$BOOST_ROOT"}
 
 if [[ $ARCHITECTURE =~ "slc5.*" ]]; then
