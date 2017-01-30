@@ -15,41 +15,66 @@ prefer_system_check: |
 echo "Building ALICE boost. You can avoid that by installing at least boost 1.59."
 
 TMPB2=$BUILDDIR/tmp-boost-build
+
 case $ARCHITECTURE in 
-  osx*) TOOLSET=darwin ;;
-  *) TOOLSET=gcc ;;
+  osx*) if [[ FAIRROOT ]]; then
+          TOOLSET=clang
+        else
+          TOOLSET=darwin
+        fi 
+        ;;
+     *) TOOLSET=gcc ;;
 esac
 
-rsync -a $SOURCEDIR/ $BUILDDIR/
-cd $BUILDDIR/tools/build
-bash bootstrap.sh $TOOLSET
-mkdir -p $TMPB2
-./b2 install --prefix=$TMPB2
-export PATH=$TMPB2/bin:$PATH
-cd $BUILDDIR
-b2 -q \
-   -d2 \
-   ${JOBS+-j $JOBS} \
-   --prefix=$INSTALLROOT \
-   --build-dir=build-boost \
-   --disable-icu \
-   --without-container \
-   --without-context \
-   --without-coroutine \
-   --without-graph \
-   --without-graph_parallel \
-   --without-locale \
-   --without-math \
-   --without-mpi \
-   --without-python \
-   --without-wave \
-   toolset=$TOOLSET \
-   link=shared \
-   threading=multi \
-   variant=release \
-   $EXTRA_CXXFLAGS \
-   install
 
+if [[ FAIRROOT ]]; then
+  if [[ $CXXFLAGS == *"-std=c++11"* ]]; then
+    cxxflags="-std=c++11"
+    if [[ $CXXFLAGS == *"-stdlib=libc++"* ]]; then
+      cxxflags="$cxxflags -stdlib=libc++"
+    fi
+    myflags='cxxflags="$cxxflags" linkflags="$cxxflags"'
+  else
+    myflags=""
+  fi
+  rsync -a $SOURCEDIR/ $BUILDDIR/
+  ./bootstrap.sh $myflags --with-toolset=$TOOLSET
+  ./b2 -q -d2 $myflags \
+    --build-dir=$PWD/tmp --build-type=minimal \
+    --toolset=$TOOLSET --prefix=$INSTALLROOT  \
+    --layout=system ${JOBS+-j $JOBS} \
+    install
+else
+  rsync -a $SOURCEDIR/ $BUILDDIR/
+  cd $BUILDDIR/tools/build
+  bash bootstrap.sh $TOOLSET
+  mkdir -p $TMPB2
+  ./b2 install --prefix=$TMPB2
+  export PATH=$TMPB2/bin:$PATH
+  cd $BUILDDIR
+  b2 -q \
+     -d2 \
+     ${JOBS+-j $JOBS} \
+     --prefix=$INSTALLROOT \
+     --build-dir=build-boost \
+     --disable-icu \
+     --without-container \
+     --without-context \
+     --without-coroutine \
+     --without-graph \
+     --without-graph_parallel \
+     --without-locale \
+     --without-math \
+     --without-mpi \
+     --without-python \
+     --without-wave \
+     toolset=$TOOLSET \
+     link=shared \
+     threading=multi \
+     variant=release \
+     $EXTRA_CXXFLAGS \
+     install
+fi
 # Modulefile
 MODULEDIR="$INSTALLROOT/etc/modulefiles"
 MODULEFILE="$MODULEDIR/$PKGNAME"
