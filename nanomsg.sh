@@ -6,7 +6,12 @@ build_requires:
   - CMake
 ---
 #!/bin/sh
-cmake $SOURCEDIR -DCMAKE_INSTALL_PREFIX:PATH="${INSTALLROOT}"
+cmake -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
+      -DCMAKE_CXX_COMPULER=$CXX \
+      -DCMAKE_C_COMPULER=$CC \
+      -DCMAKE_INSTALL_PREFIX:PATH="${INSTALLROOT}" \
+      $SOURCEDIR
+
 make ${JOBS+-j $JOBS}
 make test
 make install
