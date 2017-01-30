@@ -8,11 +8,20 @@ build_requires:
 ---
 #!/bin/bash -e
 
-cmake  $SOURCEDIR                           \
-       -Dmomentum=GEV                       \
-       -Dlength=MM                          \
-       -Dbuild_docs:BOOL=OFF                \
-       -DCMAKE_INSTALL_PREFIX=$INSTALLROOT
+if [[ FAIRROOT ]]; then
+  _lengthunit=CM
+else
+  _lengthunit=MM
+fi
+
+cmake -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
+      -DCMAKE_CXX_COMPILER=$CXX            \
+      -DCMAKE_C_COMPILER=$CC               \
+      -DCMAKE_INSTALL_PREFIX=$INSTALLROOT  \
+      -Dmomentum:STRING=GEV                \
+      -Dlength:STRING=${_lengthunit}       \
+      -Dbuild_docs:BOOL=OFF                \
+      $SOURCEDIR
 
 make ${JOBS+-j $JOBS}
 make install
