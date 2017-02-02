@@ -1,33 +1,23 @@
 package: FairSoft
-version: "apr16dev"
+version: "feb17dev"
 requires:
-# - AlfaGTest
  - googletest
-# - AlfaBoost
- -boost
-# - AlfaGeant4
-# - AlfaRoot5
-#   - AlfaGsl
-#   - AlfaPythia6
+ - boost
+ - geant4
+ - root
+ - gsl
  - pythia6
-#   - AlfaPythia8
- - pythia8
-#     - AlfaHepMC
+ - pythia
  - hepmc
-#   - AlfaXRootD
-# - AlfaPluto  
-# - AlfaGeant3
-# - AlfaGeant4Vmc
-#   -AlfaVgm
-# - AlfaZeroMQ
+ - AlfaXRootD
+ - geant3
+ - geant4_vmc
+ - vgm
  - zeromq
-# - AlfaProtoBuf
  - protobuf
-# - AlfaNanoMsg
- - naomsg
-# - AlfaFlatBuffers
+ - nanomsg
  - flatbuffers
-# - AlfaMillepede
+ - Millepede
 prepend_path:
   PATH: "$FAIRSOFT_ROOT/bin"
 ---

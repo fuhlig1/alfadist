@@ -12,10 +12,14 @@ disable:
   - AliEn-Runtime
   - AliRoot
   - lhapdf
+  - DDS
 overrides:
   boost:
     tag: "v1.61.0"
     source: "https://github.com/FairRootGroup/boost.git"
+  geant3:
+    source: "https://github.com/FairRootGroup/geant3.git"
+    tag: "v2.1"
   pythia6:
     tag: "alice/416"  
   ROOT:

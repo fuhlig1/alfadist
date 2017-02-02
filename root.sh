@@ -4,7 +4,9 @@ source: https://github.com/root-mirror/root
 tag: v6-06-04
 requires:
   - AliEn-Runtime:(?!.*ppc64)
+  - AlfaXRootD
   - GSL
+  - pythia
   - opengl:(?!osx)
   - Xdevel:(?!osx)
   - FreeType:(?!osx)
@@ -31,21 +33,33 @@ incremental_recipe: |
 #!/bin/bash -e
 unset ROOTSYS
 
-COMPILER_CC=cc
-COMPILER_CXX=c++
-COMPILER_LD=c++
-[[ "$CXXFLAGS" != *'-std=c++11'* ]] || CXX11=1
+VC="-Dvc=ON"
 
 case $ARCHITECTURE in
-  osx*)
-    ENABLE_COCOA=1
-    COMPILER_CC=clang
-    COMPILER_CXX=clang++
-    COMPILER_LD=clang
-    [[ ! $GSL_ROOT ]] && GSL_ROOT=`brew --prefix gsl`
-    [[ ! $OPENSSL_ROOT ]] && SYS_OPENSSL_ROOT=`brew --prefix openssl`
-  ;;
+  osx*) if clang --version | grep -q "version 7" ; then
+          VC="-Dvc=OFF"
+        fi
+        ENABLE_COCOA=1
+        [[ ! $GSL_ROOT ]] && GSL_ROOT=`brew --prefix gsl`
+        [[ ! $OPENSSL_ROOT ]] && SYS_OPENSSL_ROOT=`brew --prefix openssl`
+        ;;
 esac
+
+if [[ FAIRROOT ]]; then
+  xrootd="-DXROOTD_ROOT_DIR=$ALFAXROOTD_ROOT" 
+  freetype="-Dbuiltin-freetype=ON"
+  pythia8="-DPYTHIA8_DIR=$PYTHIA_ROOT"
+#  extraflags="-Dgdml=ON -Dxml=ON -Dbuiltin-ftgl=ON -Dbuiltin-glew=ON -Dasimage=ON -Drpath=ON -Dglobus=OFF $VC -DCMAKE_INSTALL_SYSCONFDIR=$INSTALLROOT/share/root/etc -Dgnuinstall=ON"
+  extraflags="-Dgdml=ON -Dxml=ON -Dbuiltin-ftgl=ON -Dbuiltin-glew=ON -Dasimage=ON -Drpath=ON -Dglobus=OFF $VC -Dgnuinstall=ON"
+else
+  xrootd="${XROOTD_ROOT:+-DXROOTD_ROOT_DIR=$ALIEN_RUNTIME_ROOT}"
+  freetype="-Dbuiltin-freetype=OFF"
+  pythia8=""
+  extraflags=" "
+fi
+
+[[ "$CXXFLAGS" != *'-std=c++11'* ]] || CXX11=1
+[[ "$CXXFLAGS" != *"-stdlib=libc++"* ]] || LIBCXX=1
 
 if [[ $ALICE_DAQ ]]; then
   # DAQ requires static ROOT, only supported by ./configure (not CMake).
@@ -73,42 +87,55 @@ if [[ $ALICE_DAQ ]]; then
             soversion ${CXX11:+cxx11} mysql xml"
 else
   # Normal ROOT build.
-  cmake $SOURCEDIR                                                \
-        -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE                      \
-        -DCMAKE_INSTALL_PREFIX=$INSTALLROOT                       \
-        ${ALIEN_RUNTIME_ROOT:+-Dalien=ON}                         \
-        ${ALIEN_RUNTIME_ROOT:+-DALIEN_DIR=$ALIEN_RUNTIME_ROOT}    \
-        ${ALIEN_RUNTIME_ROOT:+-DMONALISA_DIR=$ALIEN_RUNTIME_ROOT} \
-        ${XROOTD_ROOT:+-DXROOTD_ROOT_DIR=$ALIEN_RUNTIME_ROOT}     \
-        ${CXX11:+-Dcxx11=ON}                                      \
-        -Dfreetype=ON                                             \
-        -Dbuiltin_freetype=OFF                                    \
-        -Dpcre=OFF                                                \
-        -Dbuiltin_pcre=ON                                         \
-        ${ENABLE_COCOA:+-Dcocoa=ON}                               \
-        -DCMAKE_CXX_COMPILER=$COMPILER_CXX                        \
-        -DCMAKE_C_COMPILER=$COMPILER_CC                           \
-        -DCMAKE_LINKER=$COMPILER_LD                               \
-        ${OPENSSL_ROOT:+-DOPENSSL_ROOT=$ALIEN_RUNTIME_ROOT}       \
-        ${SYS_OPENSSL_ROOT:+-DOPENSSL_ROOT=$SYS_OPENSSL_ROOT}     \
-        ${SYS_OPENSSL_ROOT:+-DOPENSSL_INCLUDE_DIR=$SYS_OPENSSL_ROOT/include}  \
-        ${LIBXML2_ROOT:+-DLIBXML2_ROOT=$ALIEN_RUNTIME_ROOT}       \
-        ${GSL_ROOT:+-DGSL_DIR=$GSL_ROOT}                          \
-        -Dpgsql=OFF                                               \
-        -Dminuit2=ON                                              \
-        -Dpythia6_nolink=ON                                       \
-        -Droofit=ON                                               \
-        -Dhttp=ON                                                 \
-        -Dsoversion=ON                                            \
-        -Dshadowpw=OFF                                            \
-        -Dvdt=ON                                                  \
-        -DCMAKE_PREFIX_PATH="$FREETYPE_ROOT;$SYS_OPENSSL_ROOT;$GSL_ROOT;$ALIEN_RUNTIME_ROOT;$PYTHON_ROOT;$PYTHON_MODULES_ROOT"
+cmake -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
+      -DCMAKE_C_COMPILER=$CC \
+      -DCMAKE_CXX_COMPILER=$CXX \
+      -DCMAKE_Fortran_COMPILER=$FC \
+      -DCMAKE_LINKER=$CXX \
+      ${CXX11:+-Dcxx11=ON} \
+      ${LIBCXX:+-Dlibcxx=ON} \
+      -DCMAKE_INSTALL_PREFIX=$INSTALLROOT \
+      ${ALIEN_RUNTIME_ROOT:+-Dalien=ON}                         \
+      ${ALIEN_RUNTIME_ROOT:+-DALIEN_DIR=$ALIEN_RUNTIME_ROOT}    \
+      ${ALIEN_RUNTIME_ROOT:+-DMONALISA_DIR=$ALIEN_RUNTIME_ROOT} \
+      $xrootd \
+      $pythia8 \
+      -Dpcre=OFF                                                \
+      -Dbuiltin_pcre=ON                                         \
+      ${ENABLE_COCOA:+-Dcocoa=ON}                               \
+      ${GSL_ROOT:+-DGSL_DIR=$GSL_ROOT}                          \
+      ${OPENSSL_ROOT:+-DOPENSSL_ROOT=$ALIEN_RUNTIME_ROOT}       \
+      ${SYS_OPENSSL_ROOT:+-DOPENSSL_ROOT=$SYS_OPENSSL_ROOT}     \
+      ${SYS_OPENSSL_ROOT:+-DOPENSSL_INCLUDE_DIR=$SYS_OPENSSL_ROOT/include}  \
+      ${LIBXML2_ROOT:+-DLIBXML2_ROOT=$ALIEN_RUNTIME_ROOT}       \
+      -Dpgsql=OFF                                               \
+      -Dminuit2=ON \
+      -Dpythia6_nolink=ON                                       \
+      -Droofit=ON                                               \
+      -Dhttp=ON \
+      -Dsoversion=ON \
+      -Dshadowpw=OFF                                            \
+      -Dvdt=ON                                                  \
+      $extraflags \
+      -DCMAKE_PREFIX_PATH="$FREETYPE_ROOT;$SYS_OPENSSL_ROOT;$GSL_ROOT;$ALIEN_RUNTIME_ROOT;$PYTHON_ROOT;$PYTHON_MODULES_ROOT" \
+      $SOURCEDIR
+
   FEATURES="builtin_pcre mathmore xml ssl opengl minuit2
             pythia6 roofit soversion vdt ${CXX11:+cxx11} ${XROOTD_ROOT:+xrootd}
             ${ALIEN_RUNTIME_ROOT:+alien monalisa}
             ${ENABLE_COCOA:+builtin_freetype}"
   NO_FEATURES="${FREETYPE_ROOT:+builtin_freetype}"
 fi
+
+#case $ARCHITECTURE in
+#  osx*)
+#    sed -e "s#$INSTALLROOT#${WORK_DIR}/$PKGPATH#g" -i '' include/RConfigure.h
+#    ;;
+#     *)
+#    sed -e "s#$INSTALLROOT#${WORK_DIR}/$PKGPATH#g" -i'' include/RConfigure.h
+#    ;;
+#esac
+
 
 # Check if all required features are enabled
 bin/root-config --features

@@ -3,15 +3,24 @@ version: dev
 source: https://github.com/FairRootGroup/FairRoot
 tag: dev
 requires:
-  - generators
-  - simulation
-  - ROOT
-  - ZeroMQ
-  - nanomsg
-  - boost
-  - protobuf
-  - DDS
-  - "GCC-Toolchain:(?!osx)"
+ - googletest
+ - boost
+ - GEANT4
+ - ROOT
+ - GSL
+ - pythia6
+ - pythia
+ - HepMC
+ - AlfaXRootD
+ - GEANT3
+ - GEANT4_VMC
+ - vgm
+ - ZeroMQ
+ - protobuf
+ - nanomsg
+ - flatbuffers
+ - Millepede
+ - "GCC-Toolchain:(?!osx)"
 env:
   VMCWORKDIR: "$FAIRROOT_ROOT/share/fairbase/examples"
   GEOMPATH:   "$FAIRROOT_ROOT/share/fairbase/examples/common/geometry"
