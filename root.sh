@@ -50,7 +50,7 @@ if [[ FAIRROOT ]]; then
   freetype="-Dbuiltin-freetype=ON"
   pythia8="-DPYTHIA8_DIR=$PYTHIA_ROOT"
 #  extraflags="-Dgdml=ON -Dxml=ON -Dbuiltin-ftgl=ON -Dbuiltin-glew=ON -Dasimage=ON -Drpath=ON -Dglobus=OFF $VC -DCMAKE_INSTALL_SYSCONFDIR=$INSTALLROOT/share/root/etc -Dgnuinstall=ON"
-  extraflags="-Dgdml=ON -Dxml=ON -Dbuiltin-ftgl=ON -Dbuiltin-glew=ON -Dasimage=ON -Dglobus=OFF $VC -Dgnuinstall=ON"
+  extraflags="-Dgdml=ON -Dxml=ON -Dbuiltin-ftgl=ON -Dbuiltin-glew=ON -Dasimage=ON -Dglobus=OFF $VC"
 else
   xrootd="${XROOTD_ROOT:+-DXROOTD_ROOT_DIR=$ALIEN_RUNTIME_ROOT}"
   freetype="-Dbuiltin-freetype=OFF"
