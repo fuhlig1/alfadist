@@ -29,20 +29,20 @@ esac
 
 if [[ FAIRROOT ]]; then
   if [[ $CXXFLAGS == *"-std=c++11"* ]]; then
-    cxxflags="-std=c++11"
+    myflags="cxxflags=\"-std=c++11\""
     if [[ $CXXFLAGS == *"-stdlib=libc++"* ]]; then
-      cxxflags="$cxxflags -stdlib=libc++"
+      myflags="cxxflags=\"-std=c++11\" cxxflags=\"-stdlib=libc++\" linkflags=\"-stdlib=libc++\""
     fi
-    myflags='cxxflags="$cxxflags" linkflags="$cxxflags"'
   else
     myflags=""
   fi
   rsync -a $SOURCEDIR/ $BUILDDIR/
   ./bootstrap.sh $myflags --with-toolset=$TOOLSET
-  ./b2 -q -d2 $myflags \
+  ./b2 -q -d2 \
     --build-dir=$PWD/tmp --build-type=minimal \
     --toolset=$TOOLSET --prefix=$INSTALLROOT  \
     --layout=system ${JOBS+-j $JOBS} \
+    $myflags \
     install
 else
   rsync -a $SOURCEDIR/ $BUILDDIR/
