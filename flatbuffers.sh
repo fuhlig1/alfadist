@@ -17,20 +17,23 @@ cmake -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
 make ${JOBS+-j $JOBS}
 make install
 
-#case $ARCHITECTURE in
-#  osx*) 
-#    cd $INSTALLROOT/lib
-#    for file in $(ls *.dylib); do
-#       install_name_tool -id ${WORK_DIR}/$PKGPATH/lib/$file $file
-#    done
-#    cd $INSTALLROOT/bin
-#    declare -a _binaries=("nanocat")
-#    for file in "${_binaries[@]}"; do
-#        cd $INSTALLROOT/lib
-#        for file1 in $(ls *.dylib); do
-#          cd $INSTALLROOT/bin
-#          install_name_tool -change $INSTALLROOT/lib/$file1 ${WORK_DIR}/$PKGPATH/lib/$file1 $file
-#        done
-#    done
-#  ;;
-#esac
+# Modulefile support
+MODULEDIR="$INSTALLROOT/etc/modulefiles"
+MODULEFILE="$MODULEDIR/$PKGNAME"
+mkdir -p "$MODULEDIR"
+cat > "$MODULEFILE" <<EoF
+#%Module1.0
+proc ModulesHelp { } {
+  global version
+  puts stderr "ALICE Modulefile for $PKGNAME $PKGVERSION-@@PKGREVISION@$PKGHASH@@"
+}
+set version $PKGVERSION-@@PKGREVISION@$PKGHASH@@
+module-whatis "ALICE Modulefile for $PKGNAME $PKGVERSION-@@PKGREVISION@$PKGHASH@@"
+# Dependencies
+module load BASE/1.0
+# Our environment
+setenv FLATBUFFERS_ROOT \$::env(BASEDIR)/$PKGNAME/\$version
+prepend-path LD_LIBRARY_PATH \$::env(FLATBUFFERS_ROOT)/lib
+$([[ ${ARCHITECTURE:0:3} == osx ]] && echo "prepend-path DYLD_LIBRARY_PATH \$::env(FLATBUFFERS_ROOT)/lib")
+prepend-path PATH \$::env(FLATBUFFERS_ROOT)/bin
+EoF
