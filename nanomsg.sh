@@ -1,7 +1,7 @@
 package: nanomsg
-version: v1.0.0
+version: 1.0.0+git_%(short_hash)s
 source: https://github.com/nanomsg/nanomsg
-tag: 1.0.0
+tag: c52f1bedca6b72fb31b473929d99f2fe90a13445
 build_requires:
   - CMake
 ---
@@ -11,10 +11,9 @@ cmake -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
       -DCMAKE_C_COMPULER=$CC \
       -DCMAKE_INSTALL_PREFIX:PATH="${INSTALLROOT}" \
       $SOURCEDIR
-
-make ${JOBS+-j $JOBS}
-make test
-make install
+cmake --build . -- ${JOBS+-j $JOBS}
+cmake --build . --target test
+cmake --build . --target install
 
 # Modulefile support
 MODULEDIR="$INSTALLROOT/etc/modulefiles"
