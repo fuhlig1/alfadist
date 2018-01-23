@@ -5,9 +5,9 @@ source: https://github.com/FairRootGroup/FairRoot
 requires:
   - FairSoft
 env:
-  VMCWORKDIR: "$FAIRROOT_ROOT/share/fairbase/examples"
-  GEOMPATH:   "$FAIRROOT_ROOT/share/fairbase/examples/common/geometry"
-  CONFIG_DIR: "$FAIRROOT_ROOT/share/fairbase/examples/common/gconfig"
+  VMCWORKDIR: "$FAIRROOT_ROOT/share/fairroot/examples"
+  GEOMPATH:   "$FAIRROOT_ROOT/share/fairroot/examples/common/geometry"
+  CONFIG_DIR: "$FAIRROOT_ROOT/share/fairroot/examples/common/gconfig"
 prepend_path:
   ROOT_INCLUDE_PATH: "$FAIRROOT_ROOT/include"
 incremental_recipe: |
@@ -15,6 +15,19 @@ incremental_recipe: |
   mkdir -p $INSTALLROOT/etc/modulefiles && rsync -a --delete etc/modulefiles/ $INSTALLROOT/etc/modulefiles
 ---
 #!/bin/sh
+
+case $ARCHITECTURE in
+  osx*)
+    # If we preferred system tools, we need to make sure we can pick them up.
+    [[ ! $BOOST_ROOT ]] && BOOST_ROOT=`brew --prefix boost`
+    [[ ! $ZEROMQ_ROOT ]] && ZEROMQ_ROOT=`brew --prefix zeromq`
+    [[ ! $PROTOBUF_ROOT ]] && PROTOBUF_ROOT=`brew --prefix protobuf`
+    [[ ! $NANOMSG_ROOT ]] && NANOMSG_ROOT=`brew --prefix nanomsg`
+    [[ ! $GSL_ROOT ]] && GSL_ROOT=`brew --prefix gsl`
+    SONAME=dylib
+  ;;
+  *) SONAME=so ;;
+esac
 
 unset SIMPATH
 

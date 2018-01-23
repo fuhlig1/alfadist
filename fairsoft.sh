@@ -13,19 +13,6 @@ requires:
   - DDS
   - googletest
 ---
-case $ARCHITECTURE in
-  osx*)
-    # If we preferred system tools, we need to make sure we can pick them up.
-    [[ ! $BOOST_ROOT ]] && BOOST_ROOT=`brew --prefix boost`
-    [[ ! $ZEROMQ_ROOT ]] && ZEROMQ_ROOT=`brew --prefix zeromq`
-    [[ ! $PROTOBUF_ROOT ]] && PROTOBUF_ROOT=`brew --prefix protobuf`
-    [[ ! $NANOMSG_ROOT ]] && NANOMSG_ROOT=`brew --prefix nanomsg`
-    [[ ! $GSL_ROOT ]] && GSL_ROOT=`brew --prefix gsl`
-    SONAME=dylib
-  ;;
-  *) SONAME=so ;;
-esac
-
 # Modulefile
 mkdir -p etc/modulefiles
 cat > etc/modulefiles/$PKGNAME <<EoF
