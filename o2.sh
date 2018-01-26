@@ -83,24 +83,10 @@ if [[ $ALIBUILD_O2_TESTS ]]; then
   CXXFLAGS="${CXXFLAGS} -Werror"
 fi
 cmake $SOURCEDIR -DCMAKE_INSTALL_PREFIX=$INSTALLROOT                                              \
-      -DCMAKE_MODULE_PATH="$SOURCEDIR/cmake/modules;$FAIRROOT_ROOT/share/fairbase/cmake/modules;$FAIRROOT_ROOT/share/fairbase/cmake/modules_old"  \
-      -DFairRoot_DIR=$FAIRROOT_ROOT                                                 \
-      -DALICEO2_MODULAR_BUILD=ON                                                    \
-      -DROOTSYS=$ROOTSYS                                                            \
-      ${PYTHIA6_ROOT:+-DPythia6_LIBRARY_DIR=$PYTHIA6_ROOT/lib}                      \
-      ${GEANT3_ROOT:+-DGeant3_DIR=$GEANT3_ROOT}                                     \
-      ${GEANT4_ROOT:+-DGeant4_DIR=$GEANT4_ROOT}                                     \
-      ${VGM_ROOT:+-DVGM_DIR=$VGM_ROOT}                                              \
-      ${GEANT4_VMC_ROOT:+-DGEANT4_VMC_DIR=$GEANT4_VMC_ROOT}                         \
       -DFAIRROOTPATH=$FAIRROOT_ROOT                                                 \
-      ${BOOST_ROOT:+-DBOOST_ROOT=$BOOST_ROOT}                                       \
-      ${DDS_ROOT:+-DDDS_PATH=$DDS_ROOT}                                             \
-      -DZMQ_DIR=$ZEROMQ_ROOT                                                        \
-      -DZMQ_INCLUDE_DIR=$ZEROMQ_ROOT/include                                        \
+      -DROOTSYS=$ROOTSYS                                                            \
       ${ALIROOT_VERSION:+-DALIROOT=$ALIROOT_ROOT}                                   \
-      ${PROTOBUF_ROOT:+-DProtoBuf_DIR=$PROTOBUF_ROOT}                               \
       ${GSL_ROOT:+-DGSL_DIR=$GSL_ROOT}                                              \
-      ${PYTHIA_ROOT:+-DPYTHIA8_INCLUDE_DIR=$PYTHIA_ROOT/include}                    \
       ${HEPMC3_ROOT:+-DHEPMC3_DIR=$HEPMC3_ROOT}                                     \
       ${CMAKE_BUILD_TYPE:+-DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE}                     \
       -DMS_GSL_INCLUDE_DIR=$MS_GSL_ROOT/include                                     \

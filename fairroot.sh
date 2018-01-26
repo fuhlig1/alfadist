@@ -15,11 +15,14 @@ requires:
 build_requires:
   - googletest
 env:
-  VMCWORKDIR: "$FAIRROOT_ROOT/share/fairbase/examples"
-  GEOMPATH:   "$FAIRROOT_ROOT/share/fairbase/examples/common/geometry"
-  CONFIG_DIR: "$FAIRROOT_ROOT/share/fairbase/examples/common/gconfig"
+  VMCWORKDIR: "$FAIRROOT_ROOT/share/fairroot/examples"
+  GEOMPATH:   "$FAIRROOT_ROOT/share/fairroot/examples/common/geometry"
+  CONFIG_DIR: "$FAIRROOT_ROOT/share/fairroot/examples/common/gconfig"
 prepend_path:
   ROOT_INCLUDE_PATH: "$FAIRROOT_ROOT/include"
+incremental_recipe: |
+  cmake --build . --target install ${JOBS:+-- -j$JOBS}
+  mkdir -p $INSTALLROOT/etc/modulefiles && rsync -a --delete etc/modulefiles/ $INSTALLROOT/etc/modulefiles
 ---
 #!/bin/sh
 
@@ -45,40 +48,25 @@ esac
 [[ $BOOST_ROOT ]] && BOOST_NO_SYSTEM_PATHS=ON || BOOST_NO_SYSTEM_PATHS=OFF
 
 cmake $SOURCEDIR                                                 \
-      -DMACOSX_RPATH=OFF                                         \
       -DCMAKE_CXX_FLAGS="$CXXFLAGS"                              \
+      ${CXXSTD:+-DCMAKE_CXX_STANDARD=$CXXSTD}                    \
       ${CMAKE_BUILD_TYPE:+-DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE}  \
       -DROOTSYS=$ROOTSYS                                         \
-      -DROOT_CONFIG_SEARCHPATH=$ROOT_ROOT/bin                    \
-      ${NANOMSG_ROOT:+-DNANOMSG_DIR=$NANOMSG_ROOT}               \
-      -DPythia6_LIBRARY_DIR=$PYTHIA6_ROOT/lib                    \
-      -DGeant3_DIR=$GEANT3_ROOT                                  \
       -DDISABLE_GO=ON                                            \
       -DBUILD_EXAMPLES=OFF                                       \
-      ${GEANT4_ROOT:+-DGeant4_DIR=$GEANT4_ROOT}                  \
-      -DFAIRROOT_MODULAR_BUILD=ON                                \
-      ${DDS_ROOT:+-DDDS_PATH=$DDS_ROOT}                          \
-      ${ZEROMQ_ROOT:+-DZEROMQ_ROOT=$ZEROMQ_ROOT}                 \
-      ${BOOST_ROOT:+-DBOOST_ROOT=$BOOST_ROOT}                    \
-      ${BOOST_ROOT:+-DBOOST_INCLUDEDIR=$BOOST_ROOT/include}      \
-      ${BOOST_ROOT:+-DBOOST_LIBRARYDIR=$BOOST_ROOT/lib}          \
       -DBoost_NO_SYSTEM_PATHS=${BOOST_NO_SYSTEM_PATHS}           \
-      ${GSL_ROOT:+-DGSL_DIR=$GSL_ROOT}                           \
       -DGTEST_ROOT=$GOOGLETEST_ROOT                              \
-      ${PROTOBUF_ROOT:+-DProtoBuf_DIR=$PROTOBUF_ROOT}            \
       -DCMAKE_INSTALL_PREFIX=$INSTALLROOT
 
 # Limit the number of build processes to avoid exahusting memory when building
 # on smaller machines.
-JOBS=$((${JOBS:-1}*2/5))
-[[ $JOBS -gt 0 ]] || JOBS=1
-make -j$JOBS install
+# JOBS=$((${JOBS:-1}*2/5))
+# [[ $JOBS -gt 0 ]] || JOBS=1
+cmake --build . --target install ${JOBS:+-- -j$JOBS}
 
 # Modulefile
-MODULEDIR="$INSTALLROOT/etc/modulefiles"
-MODULEFILE="$MODULEDIR/$PKGNAME"
-mkdir -p "$MODULEDIR"
-cat > "$MODULEFILE" <<EoF
+mkdir -p etc/modulefiles
+cat > etc/modulefiles/$PKGNAME <<EoF
 #%Module1.0
 proc ModulesHelp { } {
   global version
@@ -102,7 +90,7 @@ module load BASE/1.0                                                            
             ${GCC_TOOLCHAIN_ROOT:+GCC-Toolchain/$GCC_TOOLCHAIN_VERSION-$GCC_TOOLCHAIN_REVISION}
 # Our environment
 setenv FAIRROOT_ROOT \$::env(BASEDIR)/$PKGNAME/\$version
-setenv VMCWORKDIR \$::env(FAIRROOT_ROOT)/share/fairbase/examples
+setenv VMCWORKDIR \$::env(FAIRROOT_ROOT)/share/fairroot/examples
 setenv GEOMPATH \$::env(VMCWORKDIR)/common/geometry
 setenv CONFIG_DIR \$::env(VMCWORKDIR)/common/gconfig
 prepend-path PATH \$::env(FAIRROOT_ROOT)/bin
@@ -110,3 +98,5 @@ prepend-path LD_LIBRARY_PATH \$::env(FAIRROOT_ROOT)/lib
 prepend-path ROOT_INCLUDE_PATH \$::env(FAIRROOT_ROOT)/include
 $([[ ${ARCHITECTURE:0:3} == osx ]] && echo "prepend-path DYLD_LIBRARY_PATH \$::env(FAIRROOT_ROOT)/lib")
 EoF
+MODULEDIR="$INSTALLROOT/etc/modulefiles"
+mkdir -p $MODULEDIR && rsync -a --delete etc/modulefiles/ $MODULEDIR
