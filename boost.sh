@@ -25,7 +25,7 @@ TMPB2=$BUILDDIR/tmp-boost-build
 if [ -z "$CXX_COMPILER" ]; then
   case $ARCHITECTURE in
     osx*)
-      TOOLSET=darwin
+      TOOLSET=clang
       ;;
     *)
       TOOLSET=gcc
@@ -112,6 +112,19 @@ b2 -q                        \
    $EXTRA_CXXFLAGS           \
    install
 [[ $BOOST_PYTHON ]] && ls -1 "$INSTALLROOT"/lib/*boost_python* > /dev/null
+
+if [[ ${ARCHITECTURE:0:3} == "osx" ]]; then
+  /usr/bin/find "$INSTALLROOT"/lib/libboost* -type f | \
+  while read BIN; do
+    MACHOTYPE=$(set +o pipefail; otool -h "$BIN" 2> /dev/null | grep filetype -A1 | tail -n1 | awk '{print $5}')
+    # See mach-o/loader.h from XNU sources: 2 == executable, 6 == dylib
+    if [[ $MACHOTYPE == 6 ]]; then
+      install_name_tool -add_rpath "$INSTALLROOT/lib/" "$BIN"
+    fi
+  done
+fi
+
+
 
 # Modulefile
 MODULEDIR="$INSTALLROOT/etc/modulefiles"
