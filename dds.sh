@@ -14,9 +14,11 @@ case $ARCHITECTURE in
     [[ ! $BOOST_ROOT ]] && BOOST_ROOT=`brew --prefix boost` ;;
 esac
 
+
 cmake                                                                \
   ${C_COMPILER:+-DCMAKE_C_COMPILER=$C_COMPILER}                      \
   ${CXX_COMPILER:+-DCMAKE_CXX_COMPILER=$CXX_COMPILER}                \
+  ${CXX_COMPILER:+-DCMAKE_LINKER=$CXX_COMPILER}                      \
   -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE                               \
   -DCMAKE_INSTALL_PREFIX=$INSTALLROOT                                \
   ${BOOST_ROOT:+-DBOOST_ROOT=$BOOST_ROOT -DBoost_NO_SYSTEM_PATHS=ON} \
