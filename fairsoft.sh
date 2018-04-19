@@ -12,6 +12,8 @@ requires:
   - msgpack
   - DDS
   - googletest
+  - FairLogger
+  - FairMQ
 ---
 # Modulefile
 mkdir -p etc/modulefiles
