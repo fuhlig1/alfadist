@@ -1,6 +1,6 @@
 package: FairMQ
 version: "%(tag_basename)s"
-tag: v1.1.5
+tag: v1.1.6
 source: https://github.com/FairRootGroup/FairMQ
 build_requires:
  - CMake
