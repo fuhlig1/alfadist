@@ -1,12 +1,13 @@
 package: protobuf
-version: v2.6.1
+version: "%(tag_basename)s"
+tag: "v3.4.0"
 source: https://github.com/google/protobuf
 build_requires:
  - autotools
  - "GCC-Toolchain:(?!osx)"
 prefer_system: "(?!slc5)"
 prefer_system_check: |
-  printf "#include \"google/protobuf/any.h\"\nint main(){}" | c++ -I$(brew --prefix protobuf)/include -Wno-deprecated-declarations -xc++ - -o /dev/null
+  printf "#include <google/protobuf/any.h>\n#if(GOOGLE_PROTOBUF_VERSION < 3004000)\n#error \"protobuf version >= 3.4.0 needed\"\n#endif\nint main(){}" | c++ -I$(brew --prefix protobuf)/include -Wno-deprecated-declarations -xc++ - -o /dev/null && which protoc &> /dev/null
 ---
 
 rsync -av --delete --exclude="**/.git" $SOURCEDIR/ .

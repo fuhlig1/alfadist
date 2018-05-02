@@ -1,7 +1,7 @@
 package: GEANT4_VMC
 version: "%(tag_basename)s%(defaults_upper)s"
-tag: "v3-2-p1-alice1"
-source: https://github.com/alisw/geant4_vmc
+tag: "v3-5"
+source: https://github.com/vmc-project/geant4_vmc
 requires:
   - ROOT
   - GEANT4
@@ -16,7 +16,7 @@ env:
 cmake                                                 \
   ${C_COMPILER:+-DCMAKE_C_COMPILER=$C_COMPILER}       \
   ${CXX_COMPILER:+-DCMAKE_CXX_COMPILER=$CXX_COMPILER} \
-  -DCMAKE_CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}        \
+  -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}              \
   -DGeant4VMC_USE_VGM=ON                              \
   -DCMAKE_INSTALL_LIBDIR=lib                          \
   -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"               \

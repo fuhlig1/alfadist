@@ -1,18 +1,15 @@
 package: ROOT
 version: "%(tag_basename)s%(defaults_upper)s"
-tag: v5-34-30-alice7
-source: https://github.com/alisw/root
+tag: "v6-10-08"
+source: https://github.com/root-mirror/root
 requires:
-  - AliEn-Runtime:(?!.*ppc64)
   - GSL
   - opengl:(?!osx)
   - Xdevel:(?!osx)
   - FreeType:(?!osx)
-  - "MySQL:slc7.*"
-  - GCC-Toolchain:(?!osx)
+  - Python-modules
 build_requires:
   - CMake
-  - "Xcode:(osx.*)"
 env:
   ROOTSYS: "$ROOT_ROOT"
 prepend_path:
@@ -28,8 +25,6 @@ incremental_recipe: |
   fi
   make ${JOBS:+-j$JOBS} install
   mkdir -p $INSTALLROOT/etc/modulefiles && rsync -a --delete etc/modulefiles/ $INSTALLROOT/etc/modulefiles
-  cd $INSTALLROOT/test
-  env PATH=$INSTALLROOT/bin:$PATH LD_LIBRARY_PATH=$INSTALLROOT/lib:$LD_LIBRARY_PATH DYLD_LIBRARY_PATH=$INSTALLROOT/lib:$DYLD_LIBRARY_PATH make ${JOBS+-j$JOBS}
 ---
 #!/bin/bash -e
 unset ROOTSYS
@@ -56,7 +51,7 @@ if [ -z "$CXX_COMPILER" -a -z "$C_COMPILER" ]; then
 else
   COMPILER_CC=$C_COMPILER
   COMPILER_CXX=$CXX_COMPILER
-  COMPILER_LD=$C_COMPILER
+  COMPILER_LD=$CXX_COMPILER
   case $ARCHITECTURE in
     osx*)
       ENABLE_COCOA=1
@@ -154,7 +149,6 @@ if [[ $ALICE_DAQ ]]; then
   export ROOTSYS=$INSTALLROOT
 fi
 make ${JOBS+-j$JOBS} install
-[[ -d $INSTALLROOT/test ]] && ( cd $INSTALLROOT/test && env PATH=$INSTALLROOT/bin:$PATH LD_LIBRARY_PATH=$INSTALLROOT/lib:$LD_LIBRARY_PATH DYLD_LIBRARY_PATH=$INSTALLROOT/lib:$DYLD_LIBRARY_PATH make ${JOBS+-j$JOBS} )
 
 # Modulefile
 mkdir -p etc/modulefiles

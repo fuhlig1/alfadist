@@ -3,7 +3,6 @@ version: "%(tag_basename)s"
 tag: alice/v2.7.10
 source: https://github.com/alisw/cpython.git
 requires:
- - AliEn-Runtime:(?!.*ppc64)
  - FreeType
  - libpng
  - sqlite

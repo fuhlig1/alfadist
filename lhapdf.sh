@@ -6,7 +6,6 @@ requires:
  - yaml-cpp
  - boost
  - Python-modules
- - "GCC-Toolchain:(?!osx)"
 build_requires:
  - autotools
 env:

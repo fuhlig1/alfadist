@@ -1,31 +1,27 @@
 package: ZeroMQ
-version: v4.1.5
-source: https://github.com/alisw/zeromq
-requires:
-  - "GCC-Toolchain:(?!osx)"
+version: "%(tag_basename)s"
+tag: v4.2.5
+source: https://github.com/zeromq/libzmq
 build_requires:
-  - autotools
+  - CMake
+  - "GCC-Toolchain:(?!osx)"
 prefer_system: (?!slc5.*)
 prefer_system_check: |
-  printf "#include <zmq.h>\n#if(ZMQ_VERSION < 40103)\n#error \"zmq version >= 4.1.3 needed\"\n#endif\n int main(){}" | gcc -I$(brew --prefix zeromq)/include $([[ -d $(brew --prefix zeromq) ]] || echo "-l:libzmq.a") -xc++ - -o /dev/null 2>&1
+  printf "#include <zmq.h>\n#if(ZMQ_VERSION < 40205)\n#error \"zmq version >= 4.2.5 needed\"\n#endif\n int main(){}" | gcc -I$(brew --prefix zeromq)/include $([[ -d $(brew --prefix zeromq) ]] || echo "-l:libzmq.a") -xc++ - -o /dev/null 2>&1
 ---
 #!/bin/sh
 
-# Hack to avoid having to do autogen inside $SOURCEDIR
-rsync -a --exclude '**/.git' --delete $SOURCEDIR/ $BUILDDIR
-cd $BUILDDIR
-./autogen.sh
+mkdir -p $INSTALLROOT
 
-# Set the environment variables CC and CXX if a compiler is defined in the defaults file
-# In case CC and CXX are defined the corresponding compilers are used during compilation
-[[ -z "$CXX_COMPILER" ]] || export CXX=$CXX_COMPILER
-[[ -z "$C_COMPILER" ]] || export CC=$C_COMPILER
+cmake $SOURCEDIR                                                 \
+      ${C_COMPILER:+-DCMAKE_C_COMPILER=$C_COMPILER}              \
+      ${CMAKE_BUILD_TYPE:+-DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE}  \
+      -DCMAKE_INSTALL_PREFIX=$INSTALLROOT                        \
 
-./configure --prefix=$INSTALLROOT          \
-            --disable-dependency-tracking
+cmake --build . ${JOBS:+-- -j$JOBS}
+ctest # Some tests fail, if run in parallel, so run sequentially ...
+cmake --build . --target install
 
-make ${JOBS+-j $JOBS}
-make install
 
 # Modulefile
 MODULEDIR="$INSTALLROOT/etc/modulefiles"

@@ -1,12 +1,9 @@
-#package: nanomsg
-version: v1.0.0+git_%(short_hash)s
-tag: c52f1bedca6b72fb31b473929d99f2fe90a13445
+package: nanomsg
+version: "%(tag_basename)s"
+tag: v1.1.2
 source: https://github.com/nanomsg/nanomsg
 build_requires:
   - CMake
-prefer_system: "(?!slc5)"
-prefer_system_check: |
-  printf "#include \"nanomsg/nn.h\"\nint main(){}" | cc -I$(brew --prefix nanomsg)/include -Wno-deprecated-declarations -xc - -o /dev/null
 ---
 #!/bin/bash
 cmake                                           \

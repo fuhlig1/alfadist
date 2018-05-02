@@ -1,6 +1,6 @@
 package: DDS
 version: "%(tag_basename)s"
-tag: "1.7"
+tag: "2.0"
 source: https://github.com/FairRootGroup/DDS
 requires:
   - boost
@@ -14,21 +14,18 @@ case $ARCHITECTURE in
     [[ ! $BOOST_ROOT ]] && BOOST_ROOT=`brew --prefix boost` ;;
 esac
 
+
 cmake                                                                \
   ${C_COMPILER:+-DCMAKE_C_COMPILER=$C_COMPILER}                      \
   ${CXX_COMPILER:+-DCMAKE_CXX_COMPILER=$CXX_COMPILER}                \
+  ${CXX_COMPILER:+-DCMAKE_LINKER=$CXX_COMPILER}                      \
   -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE                               \
   -DCMAKE_INSTALL_PREFIX=$INSTALLROOT                                \
   ${BOOST_ROOT:+-DBOOST_ROOT=$BOOST_ROOT -DBoost_NO_SYSTEM_PATHS=ON} \
   $SOURCEDIR
 
-# Limit the number of build processes to avoid exahusting memory when building
-# on smaller machines.
-JOBS=$((${JOBS:-1}*2/5))
-[[ $JOBS -gt 0 ]] || JOBS=1
-
-#make -j$JOBS wn_bin  # disabled for now
-make -j$JOBS install
+cmake --build . --target wn_bin ${JOBS:+-- -j$JOBS}
+cmake --build . --target install ${JOBS:+-- -j$JOBS}
 
 MODULEDIR="$INSTALLROOT/etc/modulefiles"
 MODULEFILE="$MODULEDIR/$PKGNAME"
