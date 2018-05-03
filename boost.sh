@@ -1,7 +1,7 @@
 package: boost
 version: "%(tag_basename)s%(defaults_upper)s"
 source: https://github.com/alisw/boost.git
-tag: "v1.64.0-alice1"
+tag: "v1.66.0"
 requires:
  - Python
 build_requires:
