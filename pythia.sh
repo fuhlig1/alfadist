@@ -2,7 +2,6 @@ package: pythia
 version: "%(tag_basename)s%(defaults_upper)s"
 source: https://github.com/alisw/pythia8
 requires:
-  - lhapdf
   - HepMC
   - boost
 tag: v8223
