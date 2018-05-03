@@ -1,6 +1,6 @@
 package: FairLogger
 version: "%(tag_basename)s"
-tag: v1.0.6
+tag: v1.1.0
 source: https://github.com/FairRootGroup/FairLogger
 build_requires:
  - CMake

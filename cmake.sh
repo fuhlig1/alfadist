@@ -1,6 +1,6 @@
 package: CMake
 version: "%(tag_basename)s"
-tag: "v3.9.4"
+tag: "v3.11.1"
 source: https://github.com/Kitware/CMake
 build_requires:
  - "GCC-Toolchain:(?!osx)"
