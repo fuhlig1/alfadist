@@ -1,5 +1,50 @@
-# alidist
-Recipes to build ALICE SW
+# Alfadist
+Recipes to build ALFA SW
+Alfadist contain recipes that can be used with AlfaBuild (Alibuild)  
+
+# AliBuild/AlfaBuild
+
+aliBuild is a tool to simplify building and installing ALICE / ALFA software. _(AlfaBuild is identical to AliBuild except that it expect the recipes to be in Alfadist by default)_ The tool itself is available as a standard PyPi package. You can install it via:
+
+`pip install alibuild`
+
+Alternatively you can checkout the github repository and use it from there:
+
+`git clone https://github.com/alisw/alibuild.git`
+
+This will provide you the tool itself. In order to work you will need a set of recipes from a repository called Alfadist
+
+`git clone https://github.com/FairRootGroup/alfadist `
+
+Once you have obtained both repository, you can trigger a build via:
+
+`alfaBuild [-d] -j <jobs> build <package>`
+
+
+* < package>: is the name of the package you want to build, e.g.:
+ * FairRoot
+ * FairMQ
+ * FairLogger
+
+* -d can be used to have verbose debug output.
+* < jobs> is the maximum number of parallel processes to be used for building where possible (defaults to the number of CPUs available if omitted).
+
+# Results of a build
+
+By default (can be changed using the -c option) the installation of your builds can be found in:
+
+`sw/<architecture>/<package-name>/<package-version>-<revision>/`
+
+where:
+* < architecture> is the same as the one passed via the -a option.
+* < package-name>: is the same as the one passed as an argument.
+* < package-version>: is the same as the one found in the related recipe in alfadist.
+* < package-revision>: is the number of times you rebuilt the same version of a package, using a different recipe. In general this will be 1.
+
+
+For a full documentation of the AliBuild/AlfaBuild tool please see [here](https://alisw.github.io/alibuild/)
+
+
 
 # Guidelines for commit messages
 
@@ -10,16 +55,8 @@ Recipes to build ALICE SW
 - Do not end the first line with a full-stop (i. e. `.`)
 - Make sure you squash / cleanup your commits when it makes sense (e.g. if they are really one the fix of the other). Keep history clean.
 
-Example:
 
-```
-Fix issue in Geant4
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-commodo consequat.
-```
 
 # Guidelines for contributing recipes
 
@@ -41,7 +78,7 @@ Whenever you need to build a new external, you should consider the following:
   - If a Git / GitHub repository exists and you need to patch it, fork it, decide a
     fork point, possibly based on a tag or eventually a commit hash, and create a branch
     in your fork called `alice/<fork-point>`. This can be done with:
- 
+
         git checkout -b alice/<fork-point> <fork-point>
 
     patches should be applied on such a branch.
@@ -69,27 +106,3 @@ Whenever you need to build a new external, you should consider the following:
 Moreover try to keep the package name (as specified inside the recipe
 in the `package` field of the header) and the repository name the same,
 including capitalization.
-
-# PWGMM owned packages
-
-The following packages have been agreed to be under PWGMM ownership and will require its signoff to be deployed in production.
-
-- aligenerators
-- crmc
-- epos
-- epos-test
-- hepmc
-- jewel
-- lhapdf
-- lhapdf5
-- powheg
-- pythia
-- pythia6
-- rivet
-- rivet-test
-- sherpa
-- thepeg
-- thepeg-test
-- yoda
-
-Plus any of their dependencies.
