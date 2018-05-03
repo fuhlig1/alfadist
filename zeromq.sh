@@ -19,7 +19,7 @@ cmake $SOURCEDIR                                                 \
       -DCMAKE_INSTALL_PREFIX=$INSTALLROOT                        \
 
 cmake --build . ${JOBS:+-- -j$JOBS}
-ctest # Some tests fail, if run in parallel, so run sequentially ...
+#ctest # Some tests fail, if run in parallel, so run sequentially ...
 cmake --build . --target install
 
 

@@ -1,6 +1,5 @@
 # Alfadist
-Recipes to build ALFA SW
-Alfadist contain recipes that can be used with AlfaBuild (Alibuild)  
+Recipes to build ALFA SW (i.e:FairRoot, FairMQ, DDS, etc), These recipes are used with AlfaBuild (Alibuild) to build the software, see below.  
 
 # AliBuild/AlfaBuild
 
