@@ -1,25 +1,28 @@
 package: GEANT4
 version: "%(tag_basename)s%(defaults_upper)s"
 source: https://github.com/Geant4/geant4
-tag: v10.3.3
+tag: v10.4.0
 build_requires:
   - CMake
 env:
   G4INSTALL: "$GEANT4_ROOT"
-  G4INSTALL_DATA: "$GEANT4_ROOT/share/Geant4-10.3.3"
+  G4INSTALL_DATA: "$GEANT4_ROOT/share/Geant4-10.4.0"
   G4SYSTEM: "$(uname)-g++"
-  G4LEVELGAMMADATA:         "$GEANT4_ROOT/share/Geant4-10.3.3/data/PhotonEvaporation4.3.2"
-  G4RADIOACTIVEDATA:        "$GEANT4_ROOT/share/Geant4-10.3.3/data/RadioactiveDecay5.1.1"
-  G4LEDATA:                 "$GEANT4_ROOT/share/Geant4-10.3.3/data/G4EMLOW6.50"
-  G4NEUTRONHPDATA:          "$GEANT4_ROOT/share/Geant4-10.3.3/data/G4NDL4.5"
-  G4NEUTRONXSDATA:          "$GEANT4_ROOT/share/Geant4-10.3.3/data/G4NEUTRONXS1.4"
-  G4SAIDXSDATA:             "$GEANT4_ROOT/share/Geant4-10.3.3/data/G4SAIDDATA1.1"
-  G4NeutronHPCrossSections: "$GEANT4_ROOT/share/Geant4-10.3.3/data/G4NDL"
-  G4PIIDATA:                "$GEANT4_ROOT/share/Geant4-10.3.3/data/G4PII1.3"
-  G4REALSURFACEDATA:        "$GEANT4_ROOT/share/Geant4-10.3.3/data/RealSurface1.0"
-  G4ENSDFSTATEDATA:         "$GEANT4_ROOT/share/Geant4-10.3.3/data/G4ENSDFSTATE2.1"
-  G4ABLADATA:               "$GEANT4_ROOT/share/Geant4-10.3.3/data/G4ABLA3.0"
+  G4LEVELGAMMADATA:         "$GEANT4_ROOT/share/Geant4-10.4.0/data/G4PhotonEvaporation5.2"
+  G4RADIOACTIVEDATA:        "$GEANT4_ROOT/share/Geant4-10.4.0/data/G4RadioactiveDecay5.2"
+  G4LEDATA:                 "$GEANT4_ROOT/share/Geant4-10.4.0/data/G4EMLOW7.3"
+  G4NEUTRONHPDATA:          "$GEANT4_ROOT/share/Geant4-10.4.0/data/G4NDL4.5"
+  G4NEUTRONXSDATA:          "$GEANT4_ROOT/share/Geant4-10.4.0/data/G4NEUTRONXS1.4"
+  G4SAIDXSDATA:             "$GEANT4_ROOT/share/Geant4-10.4.0/data/G4SAIDDATA2.2"
+  G4NeutronHPCrossSections: "$GEANT4_ROOT/share/Geant4-10.4.0/data/G4NDL"
+  G4PIIDATA:                "$GEANT4_ROOT/share/Geant4-10.4.0/data/G4PII1.3"
+  G4REALSURFACEDATA:        "$GEANT4_ROOT/share/Geant4-10.4.0/data/RealSurface2.1"
+  G4ENSDFSTATEDATA:         "$GEANT4_ROOT/share/Geant4-10.4.0/data/G4ENSDFSTATE2.1"
+  G4ABLADATA:               "$GEANT4_ROOT/share/Geant4-10.4.0/data/G4ABLA3.1"
+  G4TENDL:                  "$GEANT4_ROOT/share/Geant4-10.4.0/data/G4TENDL1.3.2"
+
 ---
+
 #!/bin/bash -e
 
 [[ "$CXXFLAGS" == *'-std=c++98'* ]] && CXX98=1 || true

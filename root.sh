@@ -3,7 +3,7 @@ version: "%(tag_basename)s%(defaults_upper)s"
 tag: "v6-12-06"
 source: https://github.com/root-mirror/root
 requires:
-  - GSL
+  - gsl
   - opengl:(?!osx)
   - Xdevel:(?!osx)
   - FreeType:(?!osx)
