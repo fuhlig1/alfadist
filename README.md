@@ -21,9 +21,9 @@ Once you have obtained both repository, you can trigger a build via:
 
 
 * < package>: is the name of the package you want to build, e.g.:
- * FairRoot
- * FairMQ
- * FairLogger
+  * FairRoot
+  * FairMQ
+  * FairLogger
 
 * -d can be used to have verbose debug output.
 * < jobs> is the maximum number of parallel processes to be used for building where possible (defaults to the number of CPUs available if omitted).
