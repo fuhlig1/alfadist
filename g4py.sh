@@ -1,10 +1,9 @@
 package: G4PY
 version: "%(tag_basename)s%(defaults_upper)s"
-tag: v4.10.01.p03
-source: https://github.com/alisw/geant4
+tag: v10.4.0
+source: https://github.com/Geant4/geant4
 requires:
   - GEANT4
-  - Python-modules
   - ROOT
   - boost
   - XercesC
@@ -18,14 +17,17 @@ env:
 #!/bin/bash -e
 rsync -a $SOURCEDIR/environments/g4py/* $INSTALLROOT
 
-cmake $INSTALLROOT                               \
-      -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}     \
-      -DBoost_NO_SYSTEM_PATHS=TRUE               \
-      -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"      \
-      -DBOOST_ROOT=${BOOST_ROOT}                 \
-      -DXERCESC_ROOT_DIR=${XERCESC_ROOT}         \
-      -DCMAKE_VERBOSE_MAKEFILE=TRUE              \
-      -DBoost_NO_BOOST_CMAKE=TRUE
+cmake                                                      \
+      ${C_COMPILER:+-DCMAKE_C_COMPILER=$C_COMPILER}        \
+      ${CXX_COMPILER:+-DCMAKE_CXX_COMPILER=$CXX_COMPILER}  \
+      -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}               \
+      -DBoost_NO_SYSTEM_PATHS=TRUE                         \
+      -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"                \
+      -DBOOST_ROOT=${BOOST_ROOT}                           \
+      -DXERCESC_ROOT_DIR=${XERCESC_ROOT}                   \
+      -DCMAKE_VERBOSE_MAKEFILE=TRUE                        \
+      -DBoost_NO_BOOST_CMAKE=TRUE                          \
+      $INSTALLROOT
 
 make ${JOBS:+-j $JOBS}
 make install
