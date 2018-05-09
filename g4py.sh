@@ -7,7 +7,6 @@ requires:
   - ROOT
   - boost
   - XercesC
-  - opengl
 build_requires:
   - CMake
   - "Xcode:(osx.*)"

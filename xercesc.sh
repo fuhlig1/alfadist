@@ -1,7 +1,7 @@
 package: XercesC
-version: v3.1.4
-tag: v3.1.4
-source: https://github.com/ShipSoft/XercesC
+version: v3.2.1
+tag: Xerces-C_3_2_1
+source: https://github.com/apache/xerces-c
 build_requires:
   - GCC-Toolchain:(?!osx)
 env:
