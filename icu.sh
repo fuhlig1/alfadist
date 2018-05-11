@@ -4,11 +4,7 @@ tag: "icu4c-53_1"
 source: https://github.com/FairRootGroup/icu
 requires:
  - "GCC-Toolchain:(?!osx)"
- env:
-   ICU_INST_DIR: "$ICU_ROOT"
-   ICUINST: "$ICU_ROOT"
-   ICUROOT: "$ICU_ROOT"
----
+ ---
 #!/bin/sh
 
 $SOURCEDIR/source/configure --prefix=$INSTALLROOT CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"

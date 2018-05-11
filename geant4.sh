@@ -1,7 +1,7 @@
 package: GEANT4
 version: "%(tag_basename)s%(defaults_upper)s"
-source: https://github.com/Geant4/geant4
-tag: v10.4.0
+source: https://github.com/FairRootGroup/geant4
+tag: v10.4.0-fairroot
 build_requires:
   - CMake
   - "Xcode:(osx.*)"
@@ -47,6 +47,7 @@ cmake                                                 \
   -DGEANT4_USE_G3TOG4=ON                              \
   -DGEANT4_INSTALL_DATA=ON                            \
   -DGEANT4_USE_SYSTEM_EXPAT=OFF                       \
+  -DGEANT4_USE_OPENGL_X11=ON                          \
   ${CXX14:+-DGEANT4_BUILD_CXXSTD=c++14}               \
   ${CXX11:+-DGEANT4_BUILD_CXXSTD=c++11}               \
   ${CXX98:+-DGEANT4_BUILD_CXXSTD=c++98}               \

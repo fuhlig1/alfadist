@@ -1,12 +1,12 @@
 package: G4PY
 version: "%(tag_basename)s%(defaults_upper)s"
-tag: v10.4.0
-source: https://github.com/Geant4/geant4
+tag: v10.4.0-fairroot
+source: https://github.com/FairRootGroup/geant4
 requires:
   - GEANT4
   - ROOT
   - boost
-  - XercesC
+  - xercesc
 build_requires:
   - CMake
   - "Xcode:(osx.*)"
