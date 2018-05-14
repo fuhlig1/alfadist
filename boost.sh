@@ -12,13 +12,6 @@ prefer_system_check: |
 ---
 #!/bin/bash -e
 
-# Detect whether we can enable boost-python (internal boost detection is broken)
-BOOST_PYTHON=1
-python -c 'import sys; sys.exit(1 if sys.version_info < (2, 7) else 0)'                   && \
-  pip --help &> /dev/null                                                                 && \
-  printf '#include \"pyconfig.h"' | gcc -c -I$(python-config --cflags) -xc -o /dev/null - || \
-  unset BOOST_PYTHON
-[[ $BOOST_PYTHON ]] || WITHOUT_PYTHON="--without-python"
 
 TMPB2=$BUILDDIR/tmp-boost-build
 
@@ -102,7 +95,6 @@ b2 -q                        \
    --without-locale          \
    --without-math            \
    --without-mpi             \
-   $WITHOUT_PYTHON           \
    --without-wave            \
    --debug-configuration     \
    toolset=$TOOLSET          \
