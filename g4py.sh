@@ -30,7 +30,7 @@ cmake                                                      \
 
 make ${JOBS:+-j $JOBS}
 make install
-ctest
+
 
 ln -s lib64 $INSTALLROOT/lib
 
