@@ -1,5 +1,6 @@
 package: GEANT3
 version: "%(tag_basename)s%(defaults_upper)s"
+tag: "v2-5-gcc8"
 requires:
   - ROOT
 build_requires:

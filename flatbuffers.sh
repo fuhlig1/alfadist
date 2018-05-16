@@ -1,6 +1,6 @@
 package: flatbuffers
-version: v1.7.1
-source: https://github.com/google/flatbuffers
+version: v1.9.0-fairroot
+source: https://github.com/FairRootGroup/flatbuffers
 requires:
   - zlib
 build_requires:

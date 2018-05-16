@@ -1,7 +1,7 @@
 package: ZeroMQ
 version: "%(tag_basename)s"
-tag: v4.2.5
-source: https://github.com/zeromq/libzmq
+tag: v4.2.5-fairroot
+source: https://github.com/FairRootGroup/libzmq
 build_requires:
   - CMake
   - "GCC-Toolchain:(?!osx)"

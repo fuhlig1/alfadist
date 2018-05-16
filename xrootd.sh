@@ -1,6 +1,6 @@
 package: XRootD
 version: "%(tag_basename)s"
-tag: v3.3.6
+tag: v4.8.3
 source: https://github.com/xrootd/xrootd.git
 build_requires:
  - CMake
@@ -12,7 +12,7 @@ build_requires:
  - "GCC-Toolchain:(?!osx)"
 ---
 #!/bin/bash -e
-case $ARCHITECTURE in 
+case $ARCHITECTURE in
   osx*)
     [ ! "X$OPENSSL_ROOT" = X ] || OPENSSL_ROOT=`brew --prefix openssl`
   ;;
