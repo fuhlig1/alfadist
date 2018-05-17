@@ -6,12 +6,14 @@ build_requires:
   - CMake
 ---
 #!/bin/bash
-cmake                                           \
-  ${C_COMPILER:+-DCMAKE_C_COMPILER=$C_COMPILER} \
-  -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE          \
-  -DCMAKE_INSTALL_PREFIX:PATH="${INSTALLROOT}"  \
+cmake                                             \
+  ${_C_COMPILER:+-DCMAKE_C_COMPILER=$_C_COMPILER} \
+  ${_C_FLAGS:+-DCMAKE_C_FLAGS="$_C_FLAGS"}        \
+  ${_BUILD_TYPE:+-DCMAKE_BUILD_TYPE=$_BUILD_TYPE} \
+  -DCMAKE_INSTALL_PREFIX:PATH="${INSTALLROOT}"    \
   $SOURCEDIR
-make ${JOBS+-j $JOBS}
+
+make ${JOBS+-j $JOBS} VERBOSE=1
 make install
 [[ -d "$INSTALLROOT"/lib ]] || ln -nfs lib64 "$INSTALLROOT"/lib
 

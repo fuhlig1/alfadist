@@ -15,7 +15,7 @@ prefer_system_check: |
 
 TMPB2=$BUILDDIR/tmp-boost-build
 
-if [ -z "$CXX_COMPILER" ]; then
+if [ -z "${_CXX_COMPILER}" ]; then
   case $ARCHITECTURE in
     osx*)
       TOOLSET=clang
@@ -27,9 +27,9 @@ if [ -z "$CXX_COMPILER" ]; then
 else
   # In case the compiler is defined with the full path add the path to the PATH environment variable
   # Otherwise boost may pickup the wrong compiler
-  DIR=${CXX_COMPILER%/*}
+  DIR=${_CXX_COMPILER%/*}
   [[ -z "$DIR" ]] || export PATH=$DIR:$PATH
-  case $CXX_COMPILER in
+  case ${_CXX_COMPILER} in
     *icpc*)
       case $ARCHITECTURE in
         osx*)
@@ -60,18 +60,23 @@ else
   esac
 fi
 
-if [[ $CXXFLAGS == *"-std=c++11"* ]]; then
-  EXTRA_CXXFLAGS="cxxflags=\"-std=c++11\""
-  if [[ $CXXFLAGS == *"-stdlib=libc++"* ]]; then
-    EXTRA_CXXFLAGS="cxxflags=\"-std=c++11\" cxxflags=\"-stdlib=libc++\" linkflags=\"-stdlib=libc++\""
-  fi
-elif [[ $CXXFLAGS == *"-std=c++14"* ]]; then
-  EXTRA_CXXFLAGS="cxxflags=\"-std=c++14\""
-  if [[ $CXXFLAGS == *"-stdlib=libc++"* ]]; then
-    EXTRA_CXXFLAGS="cxxflags=\"-std=c++14\" cxxflags=\"-stdlib=libc++\" linkflags=\"-stdlib=libc++\""
-  fi
+
+
+#if [[ ${_CXX_STANDARD} == "11" ]]; then
+#  _compstd="cxxflags=\"-std=c++11\""
+#elif [[ ${_CXX_STANDARD} == "14" ]]; then
+#  _compstd="cxxflags=\"-std=c++14\""
+
+if [[ -z ${_CXX_STANDARD} ]]; then
+  _compstd=""
 else
-  EXTRA_CXXFLAGS=""
+  _compstd="cxxflags=\"-std=c++${_CXX_STANDARD}\""
+fi   
+
+if [[ ${_CXX_FLAGS} == *"-stdlib=libc++"* ]]; then
+  _linkflags="cxxflags=\"-stdlib=libc++\" linkflags=\"-stdlib=libc++\""
+else
+  _linkflags=""
 fi
 
 rsync -a $SOURCEDIR/ $BUILDDIR/
@@ -101,7 +106,8 @@ b2 -q                        \
    link=shared               \
    threading=multi           \
    variant=release           \
-   $EXTRA_CXXFLAGS           \
+   ${_compstd}               \
+   ${_linkflags}             \
    install
 [[ $BOOST_PYTHON ]] && ls -1 "$INSTALLROOT"/lib/*boost_python* > /dev/null
 

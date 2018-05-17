@@ -2,8 +2,6 @@ package: CMake
 version: "%(tag_basename)s"
 tag: "v3.11.1"
 source: https://github.com/Kitware/CMake
-build_requires:
- - "GCC-Toolchain:(?!osx)"
 prefer_system: .*
 prefer_system_check: |
   which cmake && case `cmake --version | sed -e 's/.* //' | cut -d. -f1,2,3 | head -n1` in [0-2]*|3.[0-8].*|3.9.[0-3]) exit 1 ;; esac
@@ -21,17 +19,25 @@ SET(Java_JAVAC_EXECUTABLE FALSE CACHE BOOL "" FORCE)
 # but cmake is not smart enough to find it. We do not really need ccmake anyway,
 # so just disable it.
 SET(BUILD_CursesDialog FALSE CACHE BOOL "" FORCE)
+
+# Set the proper CXX standard defined in the default file
+SET(CMAKE_CXX_STANDARD ${_CXX_STANDARD} CACHE STRING "" FORCE)
+SET(CMAKE_CXX_STANDARD_REQUIRED YES CACHE BOOL "" FORCE)
+SET(CMAKE_CXX_EXTENSIONS NO CACHE BOOL "" FORCE)
+SET(CMAKE_BUILD_TYPE ${_BUILD_TYPE} CACHE STRING "" FORCE)
 EOF
 
 # Set the environment variables CC and CXX if a compiler is defined in the defaults file
-# In case CC and CXX are defined the corresponding compilers are used during compilation
-[[ -z "$CXX_COMPILER" ]] || export CXX=$CXX_COMPILER
-[[ -z "$C_COMPILER" ]] || export CC=$C_COMPILER
-
+# In case CC and CXX are defined the corresponding compilers are used during compilation 
+[[ -z "${_CXX_COMPILER}" ]] || export CXX=${_CXX_COMPILER}
+[[ -z "${_C_COMPILER}" ]] || export CC=${_C_COMPILER}
+[[ -z "${_CXX_FLAGS}" ]] || export CXXFLAGS="${_CXX_FLAGS}"
+[[ -z "${_C_FLAGS}" ]] || export CFLAGS="${_C_FLAGS}"
+ 
 $SOURCEDIR/bootstrap --prefix=$INSTALLROOT \
                      --init=build-flags.cmake \
                      ${JOBS:+--parallel=$JOBS}
-make ${JOBS+-j $JOBS}
+make VERBOSE=1 ${JOBS+-j $JOBS}
 make install/strip
 
 mkdir -p etc/modulefiles

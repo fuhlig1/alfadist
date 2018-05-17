@@ -3,21 +3,24 @@ version: cpp-2.1.5-fairroot
 source: https://github.com/FairRootGroup/msgpack-c
 build_requires:
  - CMake
- - "GCC-Toolchain:(?!osx)"
 prefer_system: "(?!slc5)"
 prefer_system_check: |
   printf "#include <msgpack/version.hpp>\n#define VERSION (MSGPACK_VERSION_MAJOR * 10000) + (MSGPACK_VERSION_MINOR * 100) + MSGPACK_VERSION_REVISION\n#if(VERSION < 20105)\n#error \"msgpack version >= 2.1.5 needed\"\n#endif\nint main(){}" | c++ -I$(brew --prefix msgpack)/include -xc++ -std=c++11 - -o /dev/null
 ---
 mkdir -p $INSTALLROOT
 
-cmake $SOURCEDIR                                                 \
-      ${C_COMPILER:+-DCMAKE_C_COMPILER=$C_COMPILER}              \
-      ${CXX_COMPILER:+-DCMAKE_CXX_COMPILER=$CXX_COMPILER}        \
-      -DMSGPACK_CXX11=ON                                         \
-      -DMSGPACK_BUILD_TESTS=OFF                                  \
-      -DCMAKE_INSTALL_PREFIX=$INSTALLROOT
-
-cmake --build . --target install ${JOBS:+-- -j$JOBS}
+cmake                                                       \
+      ${_C_COMPILER:+-DCMAKE_C_COMPILER=$_C_COMPILER}       \
+      ${_C_FLAGS:+-DCMAKE_C_FLAGS="$_C_FLAGS"}              \
+      ${_CXX_COMPILER:+-DCMAKE_CXX_COMPILER=$_CXX_COMPILER} \
+      ${_CXX_FLAGS:+-DCMAKE_CXX_FLAGS="$_CXX_FLAGS"}        \
+      ${_BUILD_TYPE:+-DCMAKE_BUILD_TYPE=$_BUILD_TYPE}       \
+      -DMSGPACK_CXX11=ON                                    \
+      -DMSGPACK_BUILD_TESTS=OFF                             \
+      -DCMAKE_INSTALL_PREFIX=$INSTALLROOT                   \
+      $SOURCEDIR
+      
+cmake --build . --target install ${JOBS:+-- -j$JOBS} VERBOSE=1
 
 #ModuleFile
 mkdir -p etc/modulefiles

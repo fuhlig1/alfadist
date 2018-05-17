@@ -4,7 +4,6 @@ tag: v1.2.3
 source: https://github.com/FairRootGroup/FairMQ
 build_requires:
  - CMake
- - "GCC-Toolchain:(?!osx)"
 requires:
  - googletest
  - boost
@@ -19,9 +18,13 @@ incremental_recipe: |
 ---
 mkdir -p $INSTALLROOT
 
-cmake $SOURCEDIR                                                 \
-      ${CXX_COMPILER:+-DCMAKE_CXX_COMPILER=$CXX_COMPILER}        \
-      ${CMAKE_BUILD_TYPE:+-DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE}  \
+cmake                                                            \
+      ${_CXX_COMPILER:+-DCMAKE_CXX_COMPILER=$_CXX_COMPILER}      \
+      ${_CXX_FLAGS:+-DCMAKE_CXX_FLAGS="$_CXX_FLAGS"}             \
+      ${_CXX_STANDARD:+-DCMAKE_CXX_STANDARD=$_CXX_STANDARD}      \
+      ${_CXX_STANDARD:+-DCMAKE_CXX_STANDARD_REQUIRED=YES}        \
+      ${_CXX_STANDARD:+-DCMAKE_CXX_EXTENSIONS=NO}                \
+      ${_BUILD_TYPE:+-DCMAKE_BUILD_TYPE=$_BUILD_TYPE}            \
       -DCMAKE_INSTALL_PREFIX=$INSTALLROOT                        \
       ${GOOGLETEST_ROOT:+-DGTEST_ROOT=$GOOGLETEST_ROOT}          \
       ${BOOST_ROOT:+-DBOOST_ROOT=$BOOST_ROOT}                    \
@@ -35,8 +38,9 @@ cmake $SOURCEDIR                                                 \
       -DBUILD_NANOMSG_TRANSPORT=ON                               \
       -DCMAKE_INSTALL_LIBDIR=lib                                 \
       -DCMAKE_INSTALL_BINDIR=bin
+      ${SOURCEDIR}
 
-cmake --build . ${JOBS:+-- -j$JOBS}
+cmake --build . ${JOBS:+-- -j$JOBS} VERBOSE=1
 ctest ${JOBS:+-j$JOBS}
 cmake --build . --target install
 

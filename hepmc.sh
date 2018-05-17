@@ -4,21 +4,26 @@ source: https://github.com/alisw/hepmc
 tag: alice/v2.06.09
 build_requires:
   - CMake
-  - GCC-Toolchain:(?!osx.*)
 ---
 #!/bin/bash -e
 
-cmake                                        \
-       -Dmomentum=GEV                        \
-       -Dlength=MM                           \
-       -Dbuild_docs:BOOL=OFF                 \
-       ${C_COMPILER:+-DCMAKE_C_COMPILER=$C_COMPILER}                      \
-       ${CXX_COMPILER:+-DCMAKE_CXX_COMPILER=$CXX_COMPILER}                \
-       -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE  \
-       -DCMAKE_INSTALL_PREFIX=$INSTALLROOT   \
+cmake                                                        \
+       -Dmomentum=GEV                                        \
+       -Dlength=MM                                           \
+       -Dbuild_docs:BOOL=OFF                                 \
+       ${_C_COMPILER:+-DCMAKE_C_COMPILER=$_C_COMPILER}       \
+       ${_C_FLAGS:+-DCMAKE_C_FLAGS="$_C_FLAGS"}              \
+       ${_CXX_COMPILER:+-DCMAKE_CXX_COMPILER=$_CXX_COMPILER} \
+       ${_CXX_FLAGS:+-DCMAKE_CXX_FLAGS="$_CXX_FLAGS"}        \
+       ${_CXX_STANDARD:+-DCMAKE_CXX_STANDARD=$_CXX_STANDARD} \
+       ${_CXX_STANDARD:+-DCMAKE_CXX_STANDARD_REQUIRED=YES}   \
+       ${_CXX_STANDARD:+-DCMAKE_CXX_EXTENSIONS=NO}           \
+       ${_BUILD_TYPE:+-DCMAKE_BUILD_TYPE=$_BUILD_TYPE}       \
+       -DCMAKE_INSTALL_PREFIX=$INSTALLROOT                   \
        $SOURCEDIR
 
-make ${JOBS+-j $JOBS}
+
+make VERBOSE=1 ${JOBS+-j $JOBS}
 make install
 
 # Modulefile

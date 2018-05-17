@@ -20,12 +20,13 @@ esac
 
 # Set the environment variables CC and CXX if a compiler is defined in the defaults file
 # In case CC and CXX are defined the corresponding compilers are used during compilation
-[[ -z "$CXX_COMPILER" ]] || export CXX=$CXX_COMPILER
-[[ -z "$C_COMPILER" ]] || export CC=$C_COMPILER
+[[ -z "${_CXX_COMPILER}" ]] || export CXX=${_CXX_COMPILER}
+[[ -z "${_C_COMPILER}" ]] || export CC=${_C_COMPILER}
+[[ -z "${_CXX_STANDARD}" ]] || _compile_flags="${_CXX_FLAGS} -std=c++${_CXX_STANDARD}"
 
 ./configure --prefix=$INSTALLROOT \
             --enable-shared \
-            --cxx-common="$CXXFLAGS" \
+            --cxx-common="${_compile_flags}" \
             --with-hepmc2=${HEPMC_ROOT} \
             ${LHAPDF_ROOT:+--with-lhapdf6="$LHAPDF_ROOT"} \
             ${BOOST_ROOT:+--with-boost="$BOOST_ROOT"}

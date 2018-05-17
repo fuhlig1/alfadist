@@ -16,16 +16,21 @@ esac
 
 
 cmake                                                                \
-  ${C_COMPILER:+-DCMAKE_C_COMPILER=$C_COMPILER}                      \
-  ${CXX_COMPILER:+-DCMAKE_CXX_COMPILER=$CXX_COMPILER}                \
-  ${CXX_COMPILER:+-DCMAKE_LINKER=$CXX_COMPILER}                      \
-  -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE                               \
+  ${_C_COMPILER:+-DCMAKE_C_COMPILER=$_C_COMPILER}                    \
+  ${_C_FLAGS:+-DCMAKE_C_FLAGS="$_C_FLAGS"}                           \
+  ${_CXX_COMPILER:+-DCMAKE_CXX_COMPILER=$_CXX_COMPILER}              \
+  ${_CXX_FLAGS:+-DCMAKE_CXX_FLAGS="$_CXX_FLAGS"}                     \
+  ${_CXX_STANDARD:+-DCMAKE_CXX_STANDARD=$_CXX_STANDARD}              \
+  ${_CXX_STANDARD:+-DCMAKE_CXX_STANDARD_REQUIRED=YES}                \
+  ${_CXX_STANDARD:+-DCMAKE_CXX_EXTENSIONS=NO}                        \
+  ${_CXX_COMPILER:+-DCMAKE_LINKER=$_CXX_COMPILER}                    \
+  ${_BUILD_TYPE:+-DCMAKE_BUILD_TYPE=$_BUILD_TYPE}                    \
   -DCMAKE_INSTALL_PREFIX=$INSTALLROOT                                \
   ${BOOST_ROOT:+-DBOOST_ROOT=$BOOST_ROOT -DBoost_NO_SYSTEM_PATHS=ON} \
   $SOURCEDIR
 
-cmake --build . --target wn_bin ${JOBS:+-- -j$JOBS}
-cmake --build . --target install ${JOBS:+-- -j$JOBS}
+#cmake --build . --target wn_bin ${JOBS:+-- -j$JOBS} VERBOSE=1
+cmake --build . --target install ${JOBS:+-- -j$JOBS} VERBOSE=1
 
 MODULEDIR="$INSTALLROOT/etc/modulefiles"
 MODULEFILE="$MODULEDIR/$PKGNAME"

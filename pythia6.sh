@@ -8,18 +8,18 @@ build_requires:
 ---
 #!/bin/sh
 
-cmake                                                                 \
-      ${C_COMPILER:+-DCMAKE_C_COMPILER=$C_COMPILER}                   \
-      ${CXX_COMPILER:+-DCMAKE_CXX_COMPILER=$CXX_COMPILER}             \
-      ${Fortran_COMPILER:+-DCMAKE_Fortran_COMPILER=$Fortran_COMPILER} \
-      -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}                          \
-      -DCMAKE_INSTALL_PREFIX=${INSTALLROOT}                           \
+cmake                                                                   \
+      ${_C_COMPILER:+-DCMAKE_C_COMPILER=$_C_COMPILER}                   \
+      ${_Fortran_COMPILER:+-DCMAKE_Fortran_COMPILER=$_Fortran_COMPILER} \
+      ${_Fortran_FLAGS:+-DCMAKE_Fortran_FLAGS="$_Fortran_FLAGS"}        \
+      ${_C_FLAGS:+-DCMAKE_C_FLAGS="$_C_FLAGS"}                          \
+      ${_BUILD_TYPE:+-DCMAKE_BUILD_TYPE=$_BUILD_TYPE}                   \
+      -DCMAKE_INSTALL_PREFIX=${INSTALLROOT}                             \
       ${SOURCEDIR}
 
 make ${JOBS+-j$JOBS}
 make install
 ln -s libpythia6.so $INSTALLROOT/lib/libPythia6.so
-tar -c lib include | tar -x -C $INSTALLROOT
 
 # Modulefile
 MODULEDIR="$INSTALLROOT/etc/modulefiles"

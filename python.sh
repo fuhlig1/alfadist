@@ -29,7 +29,7 @@ rsync -av --exclude '**/.git' $SOURCEDIR/ $BUILDDIR/
 # The only way to pass externals to Python
 LDFLAGS=
 CPPFLAGS=
-for ext in $ALIEN_RUNTIME_ROOT $ZLIB_ROOT $FREETYPE_ROOT $LIBPNG_ROOT $SQLITE_ROOT; do
+for ext in $ZLIB_ROOT $FREETYPE_ROOT $LIBPNG_ROOT $SQLITE_ROOT; do
   LDFLAGS="$(find $ext -type d -name lib -exec echo -L\{\} \;) $LDFLAGS"
   CPPFLAGS="$(find $ext -type d -name include -exec echo -I\{\} \;) $CPPFLAGS"
 done
@@ -38,8 +38,10 @@ export CPPFLAGS=$(echo $CPPFLAGS)
 
 # Set the environment variables CC and CXX if a compiler is defined in the defaults file
 # In case CC and CXX are defined the corresponding compilers are used during compilation
-[[ -z "$CXX_COMPILER" ]] || export CXX=$CXX_COMPILER
-[[ -z "$C_COMPILER" ]] || export CC=$C_COMPILER
+[[ -z "${_CXX_COMPILER}" ]] || export CXX=${_CXX_COMPILER}
+[[ -z "${_C_COMPILER}" ]] || export CC=${_C_COMPILER}
+[[ -z "${_CXX_FLAGS}" ]] || export CXXFLAGS="${_CXX_FLAGS}"
+[[ -z "${_C_FLAGS}" ]] || export CFLAGS="${_C_FLAGS}"
 
 ./configure --prefix=$INSTALLROOT \
             --enable-shared       \
