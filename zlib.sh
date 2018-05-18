@@ -2,8 +2,6 @@ package: zlib
 version: "%(tag_basename)s"
 source: https://github.com/star-externals/zlib
 tag: v1.2.8
-build_requires:
- - "GCC-Toolchain:(?!osx)"
 prefer_system: "(?!slc5)"
 prefer_system_check: |
   printf "#include <zlib.h>\n" | gcc -xc++ - -c -M 2>&1
@@ -12,6 +10,14 @@ prefer_system_check: |
 
 echo "Building ALICE zlib. To avoid this install zlib development package."
 rsync -a --delete --exclude '**/.git' --delete-excluded $SOURCEDIR/ ./
+
+
+# Set the environment variables CC and CXX if a compiler is defined in the defaults file
+# In case CC and CXX are defined the corresponding compilers are used during compilation 
+[[ -z "${_CXX_COMPILER}" ]] || export CXX=${_CXX_COMPILER}
+[[ -z "${_C_COMPILER}" ]] || export CC=${_C_COMPILER}
+[[ -z "${_CXX_FLAGS}" ]] || export CXXFLAGS="${_CXX_FLAGS}"
+[[ -z "${_C_FLAGS}" ]] || export CFLAGS="${_C_FLAGS}"
 
 case $ARCHITECTURE in
    *_amd64_gcc4[56789]*)

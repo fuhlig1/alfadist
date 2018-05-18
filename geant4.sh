@@ -4,7 +4,6 @@ source: https://github.com/FairRootGroup/geant4
 tag: v10.4.0-fairroot
 build_requires:
   - CMake
-  - "Xcode:(osx.*)"
 incremental_recipe: |
   make ${JOBS:+-j$JOBS} install
   mkdir -p $INSTALLROOT/etc/modulefiles && rsync -a --delete etc/modulefiles/ $INSTALLROOT/etc/modulefiles
@@ -21,41 +20,36 @@ env:
   G4REALSURFACEDATA : "`find ${G4INSTALL} $G4DATASEARCHOPT '*data*RealSurface*'`"
   G4ENSDFSTATEDATA : "`find ${G4INSTALL} $G4DATASEARCHOPT '*data*G4ENSDFSTATE*'`"
 ---
-
 #!/bin/bash -e
 
-[[ "$CXXFLAGS" == *'-std=c++98'* ]] && CXX98=1 || true
-[[ "$CXXFLAGS" == *'-std=c++0x'* ]] && CXX11=1 || true
-[[ "$CXXFLAGS" == *'-std=c++11'* ]] && CXX11=1 || true
-[[ "$CXXFLAGS" == *'-std=c++14'* ]] && CXX14=1 || true
-
-cmake                                                 \
-  ${C_COMPILER:+-DCMAKE_C_COMPILER=$C_COMPILER}       \
-  ${CXX_COMPILER:+-DCMAKE_CXX_COMPILER=$CXX_COMPILER} \
-  -DCMAKE_INSTALL_PREFIX:PATH="$INSTALLROOT"          \
-  -DCMAKE_INSTALL_LIBDIR="lib"                        \
-  -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE                \
-  -DGEANT4_INSTALL_DATA_TIMEOUT=1500                  \
-  -DCMAKE_CXX_FLAGS="$CXXFLAGS -fPIC"                 \
-  -DGEANT4_BUILD_TLS_MODEL:STRING="global-dynamic"    \
-  -DGEANT4_ENABLE_TESTING=OFF                         \
-  -DBUILD_SHARED_LIBS=ON                              \
-  -DGEANT4_INSTALL_EXAMPLES=OFF                       \
-  -DGEANT4_BUILD_MULTITHREADED=OFF                    \
-  -DCMAKE_STATIC_LIBRARY_CXX_FLAGS="-fPIC"            \
-  -DCMAKE_STATIC_LIBRARY_C_FLAGS="-fPIC"              \
-  -DGEANT4_USE_G3TOG4=ON                              \
-  -DGEANT4_INSTALL_DATA=ON                            \
-  -DGEANT4_USE_SYSTEM_EXPAT=OFF                       \
-  -DGEANT4_USE_OPENGL_X11=ON                          \
-  ${CXX14:+-DGEANT4_BUILD_CXXSTD=c++14}               \
-  ${CXX11:+-DGEANT4_BUILD_CXXSTD=c++11}               \
-  ${CXX98:+-DGEANT4_BUILD_CXXSTD=c++98}               \
+cmake                                                   \
+  ${_C_COMPILER:+-DCMAKE_C_COMPILER=$_C_COMPILER}       \
+  ${_C_FLAGS:+-DCMAKE_C_FLAGS="$_C_FLAGS"}              \
+  ${_CXX_COMPILER:+-DCMAKE_CXX_COMPILER=$_CXX_COMPILER} \
+  ${_CXX_FLAGS:+-DCMAKE_CXX_FLAGS="$_CXX_FLAGS"}        \
+  ${_BUILD_TYPE:+-DCMAKE_BUILD_TYPE=$_BUILD_TYPE}       \
+  -DCMAKE_INSTALL_PREFIX:PATH="$INSTALLROOT"            \
+  -DCMAKE_INSTALL_LIBDIR="lib"                          \
+  -DGEANT4_INSTALL_DATA_TIMEOUT=1500                    \
+  -DGEANT4_BUILD_TLS_MODEL:STRING="global-dynamic"      \
+  -DGEANT4_ENABLE_TESTING=OFF                           \
+  -DBUILD_SHARED_LIBS=ON                                \
+  -DGEANT4_INSTALL_EXAMPLES=OFF                         \
+  -DGEANT4_BUILD_MULTITHREADED=OFF                      \
+  -DGEANT4_USE_G3TOG4=ON                                \
+  -DGEANT4_INSTALL_DATA=ON                              \
+  -DGEANT4_USE_SYSTEM_EXPAT=OFF                         \
+  -DGEANT4_USE_OPENGL_X11=ON                            \
+  ${_CXX_STANDARD:+-DGEANT4_BUILD_CXXSTD=c++$_CXX_STANDARD}  \
   ${XERCESC_ROOT:+-DGEANT4_USE_OPENGL_X11=ON -DGEANT4_USE_GDML=ON -DXERCESC_ROOT_DIR=$XERCESC_ROOT} \
   $SOURCEDIR
 
+#  ${CXX14:+-DGEANT4_BUILD_CXXSTD=c++14}               \
+#  ${CXX11:+-DGEANT4_BUILD_CXXSTD=c++11}               \
+#  ${CXX98:+-DGEANT4_BUILD_CXXSTD=c++98}               \
 
-cmake --build . --target install ${JOBS:+-- -j$JOBS}
+
+cmake --build . --target install ${JOBS:+-- -j$JOBS} VERBOSE=1
 
 # auto discovery of installation paths of G4 DATA
 # in order to avoid putting hard-coded version numbers (which change with every G4 tag)

@@ -9,15 +9,17 @@ build_requires:
   - CMake
 ---
 #!/bin/bash -e
-cmake                                                 \
-  ${C_COMPILER:+-DCMAKE_C_COMPILER=$C_COMPILER}       \
-  ${CXX_COMPILER:+-DCMAKE_CXX_COMPILER=$CXX_COMPILER} \
-  -DCMAKE_CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}        \
-  -DCMAKE_INSTALL_LIBDIR="lib"                        \
-  -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"               \
+cmake                                                    \
+   ${_C_COMPILER:+-DCMAKE_C_COMPILER=$_C_COMPILER}       \
+   ${_C_FLAGS:+-DCMAKE_C_FLAGS="$_C_FLAGS"}              \
+   ${_CXX_COMPILER:+-DCMAKE_CXX_COMPILER=$_CXX_COMPILER} \
+   ${_CXX_FLAGS:+-DCMAKE_CXX_FLAGS="$_CXX_FLAGS"}        \
+   ${_BUILD_TYPE:+-DCMAKE_BUILD_TYPE=$_BUILD_TYPE}       \
+  -DCMAKE_INSTALL_LIBDIR="lib"                           \
+  -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"                  \
   "$SOURCEDIR"
 
-make ${JOBS+-j $JOBS} install
+make ${JOBS+-j $JOBS} install VERBOSE=1
 
 # Modulefile
 MODULEDIR="$INSTALLROOT/etc/modulefiles"

@@ -13,16 +13,18 @@ prepend_path:
   "DYLD_LIBRARY_PATH": "$GEANT3_ROOT/lib64"
 ---
 #!/bin/bash -e
-cmake                                                                 \
-      ${C_COMPILER:+-DCMAKE_C_COMPILER=$C_COMPILER}                   \
-      ${CXX_COMPILER:+-DCMAKE_CXX_COMPILER=$CXX_COMPILER}             \
-      ${Fortran_COMPILER:+-DCMAKE_Fortran_COMPILER=$Fortran_COMPILER} \
-      -DCMAKE_INSTALL_PREFIX=$INSTALLROOT                             \
-      -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE                            \
-      -DCMAKE_SKIP_RPATH=TRUE                                         \
+cmake                                                                   \
+      ${_C_COMPILER:+-DCMAKE_C_COMPILER=$_C_COMPILER      }             \
+      ${_C_FLAGS:+-DCMAKE_C_FLAGS="$_C_FLAGS"}                          \
+      ${_CXX_COMPILER:+-DCMAKE_CXX_COMPILER=$_CXX_COMPILER}             \
+      ${_CXX_FLAGS:+-DCMAKE_CXX_FLAGS="$_CXX_FLAGS"}                    \
+      ${_Fortran_COMPILER:+-DCMAKE_Fortran_COMPILER=$_Fortran_COMPILER} \
+      ${_BUILD_TYPE:+-DCMAKE_BUILD_TYPE=$_BUILD_TYPE}                   \
+      -DCMAKE_INSTALL_PREFIX=$INSTALLROOT                               \
+      -DCMAKE_SKIP_RPATH=TRUE                                           \
       $SOURCEDIR
 
-make ${JOBS:+-j $JOBS} install
+make ${JOBS:+-j $JOBS} install VERBOSE=1
 
 [[ ! -d $INSTALLROOT/lib64 ]] && ln -sf lib $INSTALLROOT/lib64
 

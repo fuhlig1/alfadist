@@ -4,7 +4,6 @@ tag: "v3.4.0"
 source: https://github.com/google/protobuf
 build_requires:
  - autotools
- - "GCC-Toolchain:(?!osx)"
 prefer_system: "(?!slc5)"
 prefer_system_check: |
   printf "#include <google/protobuf/any.h>\n#if(GOOGLE_PROTOBUF_VERSION < 3004000)\n#error \"protobuf version >= 3.4.0 needed\"\n#endif\nint main(){}" | c++ -I$(brew --prefix protobuf)/include -Wno-deprecated-declarations -xc++ - -o /dev/null && which protoc &> /dev/null
@@ -15,8 +14,11 @@ autoreconf -ivf
 
 # Set the environment variables CC and CXX if a compiler is defined in the defaults file 
 # In case CC and CXX are defined the corresponding compilers are used during compilation  
-[[ -z "$CXX_COMPILER" ]] || export CXX=$CXX_COMPILER
-[[ -z "$C_COMPILER" ]] || export CC=$C_COMPILER
+[[ -z "${_CXX_COMPILER}" ]] || export CXX=${_CXX_COMPILER}
+[[ -z "${_C_COMPILER}" ]] || export CC=${_C_COMPILER}
+[[ -z "${_CXX_FLAGS}" ]] || export CXXFLAGS="${_CXX_FLAGS}"
+[[ -z "${_C_FLAGS}" ]] || export CFLAGS="${_C_FLAGS}"
+[[ -z "${_CXX_STANDARD}" ]] || export CXXFLAGS="${_CXX_FLAGS} -std=c++${_CXX_STANDARD}"
 
 ./configure --prefix="$INSTALLROOT"
 make ${JOBS:+-j $JOBS}

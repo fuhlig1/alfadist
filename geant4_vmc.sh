@@ -8,21 +8,22 @@ requires:
   - vgm
 build_requires:
   - CMake
-  - "Xcode:(osx.*)"
 env:
   G4VMCINSTALL: "$GEANT4_VMC_ROOT"
 ---
 #!/bin/bash -e
-cmake                                                 \
-  ${C_COMPILER:+-DCMAKE_C_COMPILER=$C_COMPILER}       \
-  ${CXX_COMPILER:+-DCMAKE_CXX_COMPILER=$CXX_COMPILER} \
-  -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}              \
-  -DGeant4VMC_USE_VGM=ON                              \
-  -DCMAKE_INSTALL_LIBDIR=lib                          \
-  -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"               \
+cmake                                                   \
+  ${_C_COMPILER:+-DCMAKE_C_COMPILER=$_C_COMPILER}       \
+  ${_C_FLAGS:+-DCMAKE_C_FLAGS="$_C_FLAGS"}              \
+  ${_CXX_COMPILER:+-DCMAKE_CXX_COMPILER=$_CXX_COMPILER} \
+  ${_CXX_FLAGS:+-DCMAKE_CXX_FLAGS="$_CXX_FLAGS"}        \
+  ${_BUILD_TYPE:+-DCMAKE_BUILD_TYPE=$_BUILD_TYPE}       \
+  -DGeant4VMC_USE_VGM=ON                                \
+  -DCMAKE_INSTALL_LIBDIR=lib                            \
+  -DCMAKE_INSTALL_PREFIX="$INSTALLROOT"                 \
   "$SOURCEDIR"
 
-make ${JOBS+-j $JOBS} install
+make ${JOBS+-j $JOBS} install VERBOSE=1
 G4VMC_SHARE=$(cd "$INSTALLROOT/share"; echo Geant4VMC-* | cut -d' ' -f1)
 ln -nfs "$G4VMC_SHARE/examples" "$INSTALLROOT/share/examples"
 

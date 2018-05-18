@@ -5,18 +5,28 @@ requires:
   - zlib
 build_requires:
  - CMake
- - "GCC-Toolchain:(?!osx)"
 prefer_system: "(?!slc5)"
 prefer_system_check: |
   printf "#include <flatbuffers/flatbuffers.h>\n#define VERSION (FLATBUFFERS_VERSION_MAJOR * 10000) + (FLATBUFFERS_VERSION_MINOR * 100) + FLATBUFFERS_VERSION_REVISION\n#if(VERSION < 10701)\n#error \"flatbuffers version >= 1.7.1 needed\"\n#endif\nint main(){}" | c++ -I$(brew --prefix flatbuffers)/include -xc++ -std=c++11 - -o /dev/null
 ---
 mkdir -p $INSTALLROOT
-cmake $SOURCEDIR                              \
-      ${C_COMPILER:+-DCMAKE_C_COMPILER=$C_COMPILER}              \
-      ${CXX_COMPILER:+-DCMAKE_CXX_COMPILER=$CXX_COMPILER}        \
-      -DCMAKE_INSTALL_PREFIX=$INSTALLROOT
 
-cmake --build . --target install ${JOBS:+-- -j$JOBS}
+
+cmake                                                            \
+      ${_C_COMPILER:+-DCMAKE_C_COMPILER=$_C_COMPILER}            \
+      ${_C_FLAGS:+-DCMAKE_C_FLAGS="$_C_FLAGS"}                   \
+      ${_CXX_COMPILER:+-DCMAKE_CXX_COMPILER=$_CXX_COMPILER}      \
+      ${_CXX_FLAGS:+-DCMAKE_CXX_FLAGS="$_CXX_FLAGS"}             \
+      ${_CXX_STANDARD:+-DCMAKE_CXX_STANDARD=$_CXX_STANDARD}      \
+      ${_CXX_STANDARD:+-DCMAKE_CXX_STANDARD_REQUIRED=YES}        \
+      ${_CXX_STANDARD:+-DCMAKE_CXX_EXTENSIONS=NO}                \
+      -DCMAKE_BUILD_TYPE=RELEASE                                 \
+      -DCMAKE_INSTALL_PREFIX=$INSTALLROOT                        \
+      $SOURCEDIR
+
+cmake --build . --target install ${JOBS:+-- -j$JOBS} VERBOSE=1
+
+#      ${_BUILD_TYPE:+-DCMAKE_BUILD_TYPE=$_BUILD_TYPE}            \
 
 #ModuleFile
 mkdir -p etc/modulefiles
