@@ -29,6 +29,12 @@ esac
 
 unset SIMPATH
 
+if [  -z "${DDS_LD_LIBRARY_PATH}" ]; then
+  _UsePathInfo="-DUSE_PATH_INFO=NO"
+else
+  _UsePathInfo="-DUSE_PATH_INFO=TRUE"
+fi
+
 cmake                                                            \
       ${_C_COMPILER:+-DCMAKE_C_COMPILER=$_C_COMPILER}            \
       ${_C_FLAGS:+-DCMAKE_C_FLAGS="$_C_FLAGS"}                   \
@@ -37,6 +43,8 @@ cmake                                                            \
       ${_CXX_STANDARD:+-DCMAKE_CXX_STANDARD=$_CXX_STANDARD}      \
       ${_CXX_STANDARD:+-DCMAKE_CXX_STANDARD_REQUIRED=YES}        \
       ${_CXX_STANDARD:+-DCMAKE_CXX_EXTENSIONS=NO}                \
+      ${_UsePathInfo}                                            \
+      -DFAIRROOT_MODULAR_BUILD=ON                                \
       -DMACOSX_RPATH=OFF                                         \
       -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE                       \
       -DROOTSYS=$ROOTSYS                                         \
@@ -47,7 +55,10 @@ cmake                                                            \
       -DFAIRROOT_MODULAR_BUILD=ON                                \
       $SOURCEDIR
 
-cmake --build . --target install ${JOBS:+-- -j$JOBS} VERBOSE=1
+cmake --build . ${JOBS:+-- -j$JOBS} VERBOSE=1
+ctest ${JOBS:+-j$JOBS}
+cmake --build . --target install
+#cmake --build . --target install ${JOBS:+-- -j$JOBS} VERBOSE=1
 
 # Modulefile
 mkdir -p etc/modulefiles

@@ -10,5 +10,3 @@ env:
   _Fortran_FLAGS: ""
   _BUILD_TYPE: "RELWITHDEBINFO"
 ---
-
-#  CPLUS_INCLUDE_PATH: "/cvmfs/it.gsi.de/compiler/gcc/6.3.0/include/c++/6.3.0/"

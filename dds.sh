@@ -13,8 +13,6 @@ case $ARCHITECTURE in
   osx*)
     [[ ! $BOOST_ROOT ]] && BOOST_ROOT=`brew --prefix boost` ;;
 esac
-#export DDS_LD_LIBRARY_PATH=/cvmfs/it.gsi.de/compiler/llvm/6.0.1/lib
-export DDS_LD_LIBRARY_PATH=/cvmfs/it.gsi.de/compiler/gcc/6.3.0/lib64
 
 cmake                                                                \
   ${_C_COMPILER:+-DCMAKE_C_COMPILER=$_C_COMPILER}                    \
