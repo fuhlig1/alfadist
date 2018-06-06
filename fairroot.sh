@@ -1,6 +1,6 @@
 package: FairRoot
 version: "%(tag_basename)s"
-tag: dev
+tag: v-17.10_patches
 source: https://github.com/FairRootGroup/FairRoot
 requires:
   - FairSoft
