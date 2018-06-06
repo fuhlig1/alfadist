@@ -37,7 +37,7 @@ cmake                                                            \
       -DBUILD_DDS_PLUGIN=ON                                      \
       -DBUILD_NANOMSG_TRANSPORT=ON                               \
       -DCMAKE_INSTALL_LIBDIR=lib                                 \
-      -DCMAKE_INSTALL_BINDIR=bin
+      -DCMAKE_INSTALL_BINDIR=bin                                 \
       ${SOURCEDIR}
 
 cmake --build . ${JOBS:+-- -j$JOBS} VERBOSE=1

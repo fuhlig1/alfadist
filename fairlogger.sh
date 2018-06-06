@@ -20,7 +20,7 @@ cmake                                                       \
       ${_CXX_STANDARD:+-DCMAKE_CXX_EXTENSIONS=NO}           \
       ${_BUILD_TYPE:+-DCMAKE_BUILD_TYPE=$_BUILD_TYPE}       \
       -DCMAKE_INSTALL_PREFIX=$INSTALLROOT                   \
-      -DCMAKE_INSTALL_LIBDIR=lib
+      -DCMAKE_INSTALL_LIBDIR=lib                            \
       -DDISABLE_COLOR=ON                                    \
       $SOURCEDIR
 
