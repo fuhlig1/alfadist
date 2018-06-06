@@ -49,6 +49,7 @@ cmake                                                            \
       -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE                       \
       -DROOTSYS=$ROOTSYS                                         \
       -DROOT_CONFIG_SEARCHPATH=$ROOT_ROOT/bin                    \
+      -DGTEST_ROOT=$GOOGLETEST_ROOT                              \
       -DDISABLE_GO=ON                                            \
       -DBUILD_EXAMPLES=ON                                        \
       -DCMAKE_INSTALL_PREFIX=$INSTALLROOT                        \
@@ -56,7 +57,7 @@ cmake                                                            \
       $SOURCEDIR
 
 cmake --build . ${JOBS:+-- -j$JOBS} VERBOSE=1
-ctest ${JOBS:+-j$JOBS}
+#ctest ${JOBS:+-j$JOBS}
 cmake --build . --target install
 #cmake --build . --target install ${JOBS:+-- -j$JOBS} VERBOSE=1
 
